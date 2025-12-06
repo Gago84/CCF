@@ -3,13 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://gago84.github.io/giangStore",
+  "homepage": "https://gago84.github.io/CCF",
   "scripts": {
-    "dev": "vite --open --port 3000",
+    "dev": "vite --open --port 5173",
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "vite build && gh-pages -d dist",
+    "deploy": "vite build && gh-pages -d dist -b CCF-Deploy",
     "lint": "eslint ."
   },
   "dependencies": {

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './styles/global.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename="/giangStore">
+  <BrowserRouter basename="/CCF">
     <App />
   </BrowserRouter>
 );

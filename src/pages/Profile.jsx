@@ -98,7 +98,7 @@ export default function Profile() {
       />
 
       <p>
-        ⭐ Điểm tích lũy: <b>{userData.points || 0}</b>
+        ⚽ Bàn thắng tích lũy: <b>{userData.points || 0}</b>
       </p>
       
       <div className="profile-actions">
