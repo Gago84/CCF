@@ -11,15 +11,15 @@ function Header() {
       <div className="header-row">
         <nav className="main-nav">
           <NavLink to="/" end>Trận đấu</NavLink>
-          <NavLink to="/VPP">Danh sách cầu thủ</NavLink>
+          {/* <NavLink to="/VPP">Danh sách cầu thủ</NavLink> */}
           <NavLink to="/combo">Tài chính</NavLink>
-          <NavLink to="/Blog">Báo chí</NavLink>
+          {/* <NavLink to="/Blog">Báo chí</NavLink> */}
         </nav>
 
         {/* Bên phải */}
-        <div className="user-nav">
+        {/* <div className="user-nav">
           <UserArea />
-        </div>
+        </div> */}
       </div>
     </header>
   );

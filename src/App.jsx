@@ -19,13 +19,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/DDHS" element={<DDHS />} />
-          <Route path="/VPP" element={<VPP />} />
+          {/* <Route path="/VPP" element={<VPP />} /> */}
           <Route path="/combo" element={<Combo />} />
-          <Route path="/Blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
-          <Route path="/signup" element={<SignUp />} /> 
+          {/* <Route path="/Blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} /> */}
+          {/* <Route path="/signup" element={<SignUp />} /> 
           <Route path="/login" element={<Login />} />           
-          <Route path="/profile" element={<Profile />} /> {/* ✅ Profile route */}
+          <Route path="/profile" element={<Profile />} /> ✅ Profile route */}
         </Routes>
       </main>
       <Footer />
