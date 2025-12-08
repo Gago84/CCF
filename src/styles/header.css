@@ -20,7 +20,7 @@ header h1 {
   margin-top: 0.8rem;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* trái – phải */
+  justify-content: center; /* trái – phải */
   flex-wrap: nowrap; /* không cho xuống dòng */
 }
 

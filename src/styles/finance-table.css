@@ -1,0 +1,15 @@
+.finance-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background: #f5f5f5;
+}
+
+/* The sheet itself */
+.finance-iframe {
+  border: none;
+  width: 100%;
+  max-width: 900px;  /* similar size as your screenshot */
+  height: 900px;     /* adjust until the whole table fits */
+  background: white;
+}

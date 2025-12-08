@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import "../styles/Combo.css";
+import FinanceTable from "../components/FinanceTable";
+
 
 function Combo() {
   const [transactions, setTransactions] = useState([]);
@@ -37,6 +39,7 @@ function Combo() {
 
   return (
     <section className="combo-page">
+      <FinanceTable />
       <h2>
         Tài chính đội bóng
         {transactions.length > 0 && (() => {
