@@ -51,17 +51,17 @@ function Intro() {
       </div>
 
       <div className="match-box">
-        <h3>⚽ Thứ 5 — 25/12/2025</h3>
+        <h3>⚽ Thứ 7 — 27/12/2025</h3>
         <p>
-          <b>Sân:</b> 10/10 Giảng Võ (đối diện KS Hà Nội — phố Trần Huy Liệu đi vào)
+          <b>Sân:</b> NVH Yên Hòa (Dương Đình Nghệ) (17h30-19h00 - sân 3 - gần cổng vào cũ)
           <br />
-          <b>Thời gian:</b> 18h00 - 19h30
+          <b>Thời gian:</b> 17h30 - 19h00
           <br />
-          <b>Trận đấu:</b> Fc KK vs Đội Bóng CCF
+          <b>Trận đấu:</b> Fc 96-99 Đào Duy Từ vs Đội Bóng CCF
           <br />
-          <b>Liên hệ:</b> Mr Tiến — 0981 183 386
+          <b>Liên hệ:</b> Mr Hiền — 0912 828 122
           <br />
-          <b>Trang phục:</b> CCF áo đỏ
+          <b>Trang phục:</b> Đội Bóng CCF áo đỏ
         </p>
       </div>
 
