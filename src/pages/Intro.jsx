@@ -1,10 +1,25 @@
 function Intro() {
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
+      <h1>📅 Lịch tháng 1/2026 🤩</h1>
+
+      <div className="match-box">
+        <h3>⚽ Thứ 7 — 10/01/2026</h3>
+        <p>
+          <b>Sân:</b> 10/10 Giảng Võ (đối diện KS Hà Nội, phố Trần Huy Liệu đi vào)
+          <br />
+          <b>Thời gian:</b> 19h30 - 21h00
+          <br />
+          <b>Trận đấu:</b> FC 07 vs Đội Bóng CCF
+          <br />
+          <b>Liên hệ:</b> Mr Dũng — 0906 280 287
+          <br />
+          <b>Trang phục:</b> Đội Bóng CCF áo đỏ
+        </p>
+      </div>
+
       <h1>📅 Lịch tháng 12/2025 🤩</h1>
-
-      <h2>Tháng 12/2025:</h2>
-
+   
       <div className="match-box">
         <h3>⚽ Thứ 6 — 05/12/2025</h3>
         <p>
