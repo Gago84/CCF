@@ -2,7 +2,20 @@ function Intro() {
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
       <h1>📅 Lịch tháng 1/2026 🤩</h1>
-
+      <div className="match-box">
+        <h3>⚽ Thứ 7 — 17/01/2026</h3>
+        <p>
+          <b>Sân:</b> NVH Yên Hòa (Dương Đình Nghệ) — sân giữa
+          <br />
+          <b>Thời gian:</b> 17h30 - 19h00
+          <br />
+          <b>Trận đấu:</b> FC 94-97 Yên Hòa vs Đội Bóng CCF
+          <br />
+          <b>Liên hệ:</b> Mr Chiến — 0913 038 934
+          <br />
+          <b>Trang phục:</b> Đội Bóng CCF áo xanh chuối
+        </p>
+      </div>
       <div className="match-box">
         <h3>⚽ Thứ 7 — 10/01/2026</h3>
         <p>
@@ -15,6 +28,10 @@ function Intro() {
           <b>Liên hệ:</b> Mr Dũng — 0906 280 287
           <br />
           <b>Trang phục:</b> Đội Bóng CCF áo đỏ
+          <br />
+          <b>Kết quả:</b> 1-1
+          <br />
+          <b>CCF ghi bàn:</b> Hạnh 1
         </p>
       </div>
 
