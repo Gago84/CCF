@@ -1,7 +1,21 @@
 function Intro() {
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
-      <h1>📅 Lịch tháng 1/2026 🤩</h1>
+      <h1>📅 Lịch tháng 1/2026 🤩</h1>      
+      <div className="match-box">
+          <h3>⚽ Thứ 5 — 22/01/2026</h3>
+          <p>
+            <b>Sân:</b> Sân Quần Ngựa (trong cung thể thao Quần Ngựa - đi cổng Đốc Ngữ vào)
+            <br />
+            <b>Thời gian:</b> 19h00 - 20h30
+            <br />
+            <b>Trận đấu:</b> FC Sea Bird vs Đội Bóng CCF
+            <br />
+            <b>Liên hệ:</b> Mr Tùng 0931773713 & Mr Duy 0901594345
+            <br />
+            <b>Trang phục:</b> Đội Bóng CCF áo xanh chuối
+          </p>
+        </div>
       <div className="match-box">
         <h3>⚽ Thứ 7 — 17/01/2026</h3>
         <p>
@@ -14,6 +28,10 @@ function Intro() {
           <b>Liên hệ:</b> Mr Chiến — 0913 038 934
           <br />
           <b>Trang phục:</b> Đội Bóng CCF áo xanh chuối
+          <br />
+          <b>Kết quả:</b> 3-0
+          <br />
+          <b>CCF ghi bàn:</b> A Trung 1, Khánh 1, Cương 1
         </p>
       </div>
       <div className="match-box">
