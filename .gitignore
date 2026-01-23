@@ -31,3 +31,5 @@ dist-ssr
 # Ignore environment files
 .env
 .env.*
+# key admin
+/import/serviceAccountKey.json

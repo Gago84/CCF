@@ -1,120 +1,142 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/config";
+
 function Intro() {
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // format YYYY-MM-DD -> DD/MM/YYYY
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const [y, m, d] = dateStr.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const q = query(collection(db, "matches"), orderBy("date", "desc"));
+        const snapshot = await getDocs(q);
+
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setMatches(data);
+      } catch (err) {
+        console.error("Firebase error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, []);
+
+  if (loading) return <p>⏳ Đang tải lịch thi đấu...</p>;
+
+  // ===== THỐNG KÊ NĂM 2026 =====
+  const matches2026 = matches.filter(
+    (m) => m.date >= "2026-01-01" && m.result
+  );
+
+  let total = 0;
+  let win = 0;
+  let draw = 0;
+  let lose = 0;
+  let totalGoals = 0;
+  let playerStats = {};
+
+  matches2026.forEach((m) => {
+    total++;
+
+    const [a, b] = m.result.split("-").map(Number);
+    totalGoals += a;
+
+    if (a > b) win++;
+    else if (a === b) draw++;
+    else lose++;
+
+    if (m.goal) {
+      const players = m.goal.split(",");
+
+      players.forEach((p) => {
+        const parts = p.trim().split(" ");
+        const goals = Number(parts.pop());
+        const name = parts.join(" ");
+
+        if (!playerStats[name]) playerStats[name] = 0;
+        playerStats[name] += goals;
+      });
+    }
+  });
+
+  const topScorers = Object.entries(playerStats)
+    .map(([name, goals]) => ({ name, goals }))
+    .sort((a, b) => b.goals - a.goals);
+
+  // ===== GROUP THEO THÁNG =====
+  const groupByMonth = matches.reduce((acc, item) => {
+    acc[item.month] = acc[item.month] || [];
+    acc[item.month].push(item);
+    return acc;
+  }, {});
+
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
-      <h1>📅 Lịch tháng 1/2026 🤩</h1>      
-      <div className="match-box">
-          <h3>⚽ Thứ 5 — 22/01/2026</h3>
-          <p>
-            <b>Sân:</b> Sân Quần Ngựa (trong cung thể thao Quần Ngựa - đi cổng Đốc Ngữ vào)
-            <br />
-            <b>Thời gian:</b> 19h00 - 20h30
-            <br />
-            <b>Trận đấu:</b> FC Sea Bird vs Đội Bóng CCF
-            <br />
-            <b>Liên hệ:</b> Mr Tùng 0931773713 & Mr Duy 0901594345
-            <br />
-            <b>Trang phục:</b> Đội Bóng CCF áo xanh chuối
-          </p>
+      {/* ===== THỐNG KÊ ===== */}
+      <div className="stats-box">
+        <h1>📊 Thống kê CCF năm 2026</h1>
+        <p>⚽ Tổng số trận: <b>{total}</b></p>
+        <p>✅ Thắng: <b>{win}</b> | 🤝 Hòa: <b>{draw}</b> | ❌ Thua: <b>{lose}</b></p>
+        <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
+
+        <h3>🔥 Vua phá lưới 2026</h3>
+        {topScorers.length === 0 && <p>Chưa có dữ liệu.</p>}
+
+        <ul>
+          {topScorers.map((p) => (
+            <li key={p.name}>
+              {p.name}: <b>{p.goals}</b> bàn
+            </li>
+          ))}
+        </ul>
+        <hr />
+      </div>
+
+      {/* ===== LỊCH THI ĐẤU ===== */}
+      {Object.keys(groupByMonth).map((month) => (
+        <div key={month}>
+          <h1>📅 Lịch tháng {month} 🤩</h1>
+
+          {groupByMonth[month].map((m) => (
+            <div className="match-box" key={m.id}>
+              <h3>⚽ {m.day} — {formatDate(m.date)}</h3>
+              <p>
+                <b>Sân:</b> {m.field}<br />
+                <b>Thời gian:</b> {m.time}<br />
+                <b>Trận đấu:</b> {m.match}<br />
+                <b>Liên hệ:</b> {m.contact}<br />
+                <b>Trang phục:</b> {m.uniform}<br />
+
+                {m.result && (
+                  <>
+                    <b>Kết quả:</b> {m.result}<br />
+                  </>
+                )}
+
+                {m.goal && (
+                  <>
+                    <b>CCF ghi bàn:</b> {m.goal}
+                  </>
+                )}
+              </p>
+            </div>
+          ))}
         </div>
-      <div className="match-box">
-        <h3>⚽ Thứ 7 — 17/01/2026</h3>
-        <p>
-          <b>Sân:</b> NVH Yên Hòa (Dương Đình Nghệ) — sân giữa
-          <br />
-          <b>Thời gian:</b> 17h30 - 19h00
-          <br />
-          <b>Trận đấu:</b> FC 94-97 Yên Hòa vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Mr Chiến — 0913 038 934
-          <br />
-          <b>Trang phục:</b> Đội Bóng CCF áo xanh chuối
-          <br />
-          <b>Kết quả:</b> 3-0
-          <br />
-          <b>CCF ghi bàn:</b> A Trung 1, Khánh 1, Cương 1
-        </p>
-      </div>
-      <div className="match-box">
-        <h3>⚽ Thứ 7 — 10/01/2026</h3>
-        <p>
-          <b>Sân:</b> 10/10 Giảng Võ (đối diện KS Hà Nội, phố Trần Huy Liệu đi vào)
-          <br />
-          <b>Thời gian:</b> 19h30 - 21h00
-          <br />
-          <b>Trận đấu:</b> FC 07 vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Mr Dũng — 0906 280 287
-          <br />
-          <b>Trang phục:</b> Đội Bóng CCF áo đỏ
-          <br />
-          <b>Kết quả:</b> 1-1
-          <br />
-          <b>CCF ghi bàn:</b> Hạnh 1
-        </p>
-      </div>
-
-      <h1>📅 Lịch tháng 12/2025 🤩</h1>
-   
-      <div className="match-box">
-        <h3>⚽ Thứ 6 — 05/12/2025</h3>
-        <p>
-          <b>Sân:</b> 10/10 Giảng Võ (đối diện KS Hà Nội, phố Trần Huy Liệu đi vào)
-          <br />
-          <b>Thời gian:</b> 19h30 - 21h00
-          <br />
-          <b>Trận đấu:</b> Fc Giảng Võ vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Mr Đức — 0888 343 222
-          <br />
-          <b>Trang phục:</b> CCF áo xanh chuối
-        </p>
-      </div>
-
-      <div className="match-box">
-        <h3>⚽ Thứ 6 — 12/12/2025</h3>
-        <p>
-          <b>Sân:</b> Tòa nhà MHDI (ngõ 60 Hoàng Quốc Việt — ngã tư HQV & Nguyễn Văn Huyên)
-          <br />
-          <b>Thời gian:</b> 19h00 - 20h30
-          <br />
-          <b>Trận đấu:</b> Fc Nghĩa Đô vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Mr Nhiệm — 0934 556 378
-          <br />
-          <b>Trang phục:</b> CCF áo đỏ
-        </p>
-      </div>
-
-      <div className="match-box">
-        <h3>⚽ Thứ 5 — 18/12/2025</h3>
-        <p>
-          <b>Thời gian:</b> 19h00
-          <br />
-          <b>Sân:</b> Học viện Quốc Phòng (cổng 98 Hoàng Sâm đi vào)
-          <br />
-          <b>Trận đấu:</b> Fc Food Beer vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Thảo — 0948 806 655
-          <br />
-          <b>Trang phục:</b> CCF áo đỏ
-        </p>
-      </div>
-
-      <div className="match-box">
-        <h3>⚽ Thứ 7 — 27/12/2025</h3>
-        <p>
-          <b>Sân:</b> NVH Yên Hòa (Dương Đình Nghệ) (17h30-19h00 - sân 3 - gần cổng vào cũ)
-          <br />
-          <b>Thời gian:</b> 17h30 - 19h00
-          <br />
-          <b>Trận đấu:</b> Fc 96-99 Đào Duy Từ vs Đội Bóng CCF
-          <br />
-          <b>Liên hệ:</b> Mr Hiền — 0912 828 122
-          <br />
-          <b>Trang phục:</b> Đội Bóng CCF áo đỏ
-        </p>
-      </div>
-
+      ))}
     </section>
   );
 }
