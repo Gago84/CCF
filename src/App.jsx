@@ -10,6 +10,8 @@ import BlogPost from "./pages/BlogPost";
 import SignUp from './pages/SignUp';
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";  // ✅ ở đây mới import
+import Admin from "./pages/Admin";   // 👈 sẽ tạo file này
+import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           {/* <Route path="/signup" element={<SignUp />} /> 
           <Route path="/login" element={<Login />} />           
           <Route path="/profile" element={<Profile />} /> ✅ Profile route */}
+          <Route path="/admin" element={<Admin />} /> {/* 👈 ADMIN */}
+          <Route path="/admin-login" element={<AdminLogin />} />
         </Routes>
       </main>
       <Footer />
