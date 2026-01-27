@@ -39,9 +39,10 @@ function Combo() {
 
   return (
     <section className="combo-page">
+      <h2>Bảng tính tài chính</h2>
       <FinanceTable />
       <h2>
-        Tài chính đội bóng
+        Tài khoản Online
         {transactions.length > 0 && (() => {
             const raw = transactions[0].availableBalanceFormatted ||
                         transactions[0].availableBalance?.toString() ||

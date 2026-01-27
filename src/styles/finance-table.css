@@ -7,15 +7,27 @@
 
 /* Iframe uses the sheet's real width */
 .finance-iframe {
-  border: none;
+  border: solid 1px black;
   width: 900px;          /* approximate width of your sheet */
   height: 900px;         /* adjust if sheet is taller/shorter */
 }
 
 /* Optional: tweak padding on very small screens */
 @media (max-width: 600px) {
-  .finance-wrapper {
-    padding-left: 0;
-    padding-right: 0;
-  }
+.finance-wrapper {
+  width: 100%;
+  height: 75vh;                  /* ✅ REQUIRED on mobile */
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;     /* ✅ allow finger scrolling */
+  padding: 0.5rem;
+}
+
+.finance-iframe {
+  border: solid 1px black;
+  width: 900px;                  /* wider than phone */
+  height: 100%;                  /* fill wrapper */
+  display: block;
+}
 }
