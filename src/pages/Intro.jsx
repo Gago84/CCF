@@ -13,6 +13,13 @@ function Intro() {
     return `${d}/${m}/${y}`;
   };
 
+  // format YYYY-MM -> MM/YYYY
+  const formatMonthTitle = (monthStr) => {
+    if (!monthStr) return "";
+    const [year, month] = monthStr.split("-");
+    return `${month}/${year}`;
+  };
+
   useEffect(() => {
     const fetchMatches = async () => {
       try {
@@ -77,6 +84,41 @@ function Intro() {
     .map(([name, goals]) => ({ name, goals }))
     .sort((a, b) => b.goals - a.goals);
 
+  // ===== VUA PHÁ LƯỚI THEO TỪNG THÁNG =====
+  let scorersByMonth = {};
+
+  matches.forEach((m) => {
+    if (!m.result || !m.goal) return;
+
+    const monthKey = m.date.slice(0, 7);
+
+    if (!scorersByMonth[monthKey])
+      scorersByMonth[monthKey] = {};
+
+    const players = m.goal.split(",");
+
+    players.forEach((p) => {
+      const parts = p.trim().split(" ");
+      const goals = Number(parts.pop());
+      const name = parts.join(" ");
+
+      if (!scorersByMonth[monthKey][name])
+        scorersByMonth[monthKey][name] = 0;
+
+      scorersByMonth[monthKey][name] += goals;
+    });
+  });
+
+  const topScorerEachMonth = Object.entries(scorersByMonth).map(
+    ([month, players]) => {
+      const top = Object.entries(players)
+        .map(([name, goals]) => ({ name, goals }))
+        .sort((a, b) => b.goals - a.goals)[0];
+
+      return { month, ...top };
+    }
+  ).sort((a,b)=>b.month.localeCompare(a.month)); // tháng mới nhất lên đầu
+
   // ===== GROUP THEO THÁNG =====
   const groupByMonth = matches.reduce((acc, item) => {
     acc[item.month] = acc[item.month] || [];
@@ -86,14 +128,26 @@ function Intro() {
 
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
-      {/* ===== THỐNG KÊ ===== */}
       <div className="stats-box">
         <h1>📊 Thống kê CCF năm 2026</h1>
+
         <p>⚽ Tổng số trận: <b>{total}</b></p>
         <p>✅ Thắng: <b>{win}</b> | 🤝 Hòa: <b>{draw}</b> | ❌ Thua: <b>{lose}</b></p>
         <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
 
+        <h3>🔥 Vua phá lưới theo tháng</h3>
+
+        {topScorerEachMonth.map((m) => (
+          <p key={m.month}>
+            👑 Tháng {formatMonthTitle(m.month)}: 
+            <b> {m.name}</b> ({m.goals} bàn)
+          </p>
+        ))}
+
+        <hr />
+
         <h3>🔥 Vua phá lưới 2026</h3>
+
         {topScorers.length === 0 && <p>Chưa có dữ liệu.</p>}
 
         <ul>
@@ -103,13 +157,14 @@ function Intro() {
             </li>
           ))}
         </ul>
+
         <hr />
       </div>
 
       {/* ===== LỊCH THI ĐẤU ===== */}
       {Object.keys(groupByMonth).map((month) => (
         <div key={month}>
-          <h1>📅 Lịch tháng {month} 🤩</h1>
+          <h1>📅 Lịch tháng {formatMonthTitle(month)} 🤩</h1>
 
           {groupByMonth[month].map((m) => (
             <div className="match-box" key={m.id}>
