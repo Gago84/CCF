@@ -9,9 +9,27 @@
 .finance-iframe {
   border: solid 1px black;
   width: 900px;          /* approximate width of your sheet */
-  height: 900px;         /* adjust if sheet is taller/shorter */
+  height: 1300px;         /* adjust if sheet is taller/shorter */
+}
+.donation-box {
+  background: #f4f6f8;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
 }
 
+.donation-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.qr-image {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+}
 /* Optional: tweak padding on very small screens */
 @media (max-width: 600px) {
   .finance-wrapper {
@@ -24,4 +42,5 @@
     height: 100%;
     border: none;
   }
+  
 }

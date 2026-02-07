@@ -6,6 +6,15 @@ function Intro() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ===== COMPONENT HIỂN THỊ DÒNG THÔNG TIN =====
+  const Row = ({ label, value }) =>
+    value ? (
+      <>
+        <b>{label}:</b> {value}
+        <br />
+      </>
+    ) : null;
+
   // format YYYY-MM-DD -> DD/MM/YYYY
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -84,7 +93,7 @@ function Intro() {
     .map(([name, goals]) => ({ name, goals }))
     .sort((a, b) => b.goals - a.goals);
 
-  // ===== VUA PHÁ LƯỚI THEO TỪNG THÁNG =====
+  // ===== VUA PHÁ LƯỚI THEO THÁNG =====
   let scorersByMonth = {};
 
   matches.forEach((m) => {
@@ -109,15 +118,15 @@ function Intro() {
     });
   });
 
-  const topScorerEachMonth = Object.entries(scorersByMonth).map(
-    ([month, players]) => {
+  const topScorerEachMonth = Object.entries(scorersByMonth)
+    .map(([month, players]) => {
       const top = Object.entries(players)
         .map(([name, goals]) => ({ name, goals }))
         .sort((a, b) => b.goals - a.goals)[0];
 
       return { month, ...top };
-    }
-  ).sort((a,b)=>b.month.localeCompare(a.month)); // tháng mới nhất lên đầu
+    })
+    .sort((a, b) => b.month.localeCompare(a.month));
 
   // ===== GROUP THEO THÁNG =====
   const groupByMonth = matches.reduce((acc, item) => {
@@ -139,7 +148,7 @@ function Intro() {
 
         {topScorerEachMonth.map((m) => (
           <p key={m.month}>
-            👑 Tháng {formatMonthTitle(m.month)}: 
+            👑 Tháng {formatMonthTitle(m.month)}:
             <b> {m.name}</b> ({m.goals} bàn)
           </p>
         ))}
@@ -169,25 +178,17 @@ function Intro() {
           {groupByMonth[month].map((m) => (
             <div className="match-box" key={m.id}>
               <h3>⚽ {m.day} — {formatDate(m.date)}</h3>
+
               <p>
-                <b>Sân:</b> {m.field}<br />
-                <b>Thời gian:</b> {m.time}<br />
-                <b>Trận đấu:</b> {m.match}<br />
-                <b>Liên hệ:</b> {m.contact}<br />
-                <b>Trang phục:</b> {m.uniform}<br />
-
-                {m.result && (
-                  <>
-                    <b>Kết quả:</b> {m.result}<br />
-                  </>
-                )}
-
-                {m.goal && (
-                  <>
-                    <b>CCF ghi bàn:</b> {m.goal}
-                  </>
-                )}
+                <Row label="Sân" value={m.field} />
+                <Row label="Thời gian" value={m.time} />
+                <Row label="Trận đấu" value={m.match} />
+                <Row label="Liên hệ" value={m.contact} />
+                <Row label="Trang phục" value={m.uniform} />
+                <Row label="Kết quả" value={m.result} />
+                <Row label="CCF ghi bàn" value={m.goal} />
               </p>
+
             </div>
           ))}
         </div>
