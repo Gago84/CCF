@@ -9,7 +9,7 @@
 .finance-iframe {
   border: solid 1px black;
   width: 900px;          /* approximate width of your sheet */
-  height: 1300px;         /* adjust if sheet is taller/shorter */
+  height: 900px;         /* adjust if sheet is taller/shorter */
 }
 .donation-box {
   background: #f4f6f8;
