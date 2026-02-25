@@ -6,7 +6,14 @@ function Intro() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ===== COMPONENT HIỂN THỊ DÒNG THÔNG TIN =====
+  // trạng thái mở / đóng accordion
+  const [openMatchId, setOpenMatchId] = useState(null);
+
+  const toggleMatch = (id) => {
+    setOpenMatchId(openMatchId === id ? null : id);
+  };
+
+  // ===== COMPONENT HIỂN THỊ DÒNG =====
   const Row = ({ label, value }) =>
     value ? (
       <>
@@ -15,18 +22,27 @@ function Intro() {
       </>
     ) : null;
 
-  // format YYYY-MM-DD -> DD/MM/YYYY
+  // YYYY-MM-DD → DD/MM/YYYY
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [y, m, d] = dateStr.split("-");
     return `${d}/${m}/${y}`;
   };
 
-  // format YYYY-MM -> MM/YYYY
+  // YYYY-MM → MM/YYYY
   const formatMonthTitle = (monthStr) => {
     if (!monthStr) return "";
     const [year, month] = monthStr.split("-");
     return `${month}/${year}`;
+  };
+
+  // Thắng / Hòa / Thua
+  const getResultText = (result) => {
+    if (!result) return "";
+    const [a, b] = result.split("-").map(Number);
+    if (a > b) return "Thắng";
+    if (a === b) return "Hòa";
+    return "Thua";
   };
 
   useEffect(() => {
@@ -53,7 +69,7 @@ function Intro() {
 
   if (loading) return <p>⏳ Đang tải lịch thi đấu...</p>;
 
-  // ===== THỐNG KÊ NĂM 2026 =====
+  // ===== THỐNG KÊ 2026 =====
   const matches2026 = matches.filter(
     (m) => m.date >= "2026-01-01" && m.result
   );
@@ -137,11 +153,20 @@ function Intro() {
 
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
+
+      {/* ===== STATS ===== */}
       <div className="stats-box">
+
         <h1>📊 Thống kê CCF năm 2026</h1>
 
         <p>⚽ Tổng số trận: <b>{total}</b></p>
-        <p>✅ Thắng: <b>{win}</b> | 🤝 Hòa: <b>{draw}</b> | ❌ Thua: <b>{lose}</b></p>
+
+        <p>
+          ✅ Thắng: <b>{win}</b> |
+          🤝 Hòa: <b>{draw}</b> |
+          ❌ Thua: <b>{lose}</b>
+        </p>
+
         <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
 
         <h3>🔥 Vua phá lưới theo tháng</h3>
@@ -168,31 +193,73 @@ function Intro() {
         </ul>
 
         <hr />
+
       </div>
 
-      {/* ===== LỊCH THI ĐẤU ===== */}
+
+      {/* ===== LỊCH ===== */}
       {Object.keys(groupByMonth).map((month) => (
+
         <div key={month}>
-          <h1>📅 Lịch tháng {formatMonthTitle(month)} 🤩</h1>
 
-          {groupByMonth[month].map((m) => (
-            <div className="match-box" key={m.id}>
-              <h3>⚽ {m.day} — {formatDate(m.date)}</h3>
+          <h1>
+            📅 Lịch tháng {formatMonthTitle(month)} 🤩
+          </h1>
 
-              <p>
-                <Row label="Sân" value={m.field} />
-                <Row label="Thời gian" value={m.time} />
-                <Row label="Trận đấu" value={m.match} />
-                <Row label="Liên hệ" value={m.contact} />
-                <Row label="Trang phục" value={m.uniform} />
-                <Row label="Kết quả" value={m.result} />
-                <Row label="CCF ghi bàn" value={m.goal} />
-              </p>
 
-            </div>
-          ))}
+          {groupByMonth[month].map((m) => {
+
+            const hasResult = !!m.result;
+
+            return (
+
+              <div className="match-box" key={m.id}>
+
+                {/* HEADER */}
+                <div
+                  onClick={() => hasResult && toggleMatch(m.id)}
+                  style={{
+                    cursor: hasResult ? "pointer" : "default",
+                    fontWeight: "bold",
+                    marginBottom: "4px"
+                  }}
+                >
+                  ⚽ {m.day} — {formatDate(m.date)}
+
+                  {hasResult &&
+                    <> — {getResultText(m.result)}</>
+                  }
+
+                </div>
+
+
+                {/* DETAIL */}
+                {(openMatchId === m.id || !hasResult) && (
+
+                  <div style={{ marginLeft: "12px" }}>
+
+                    <Row label="Sân" value={m.field} />
+                    <Row label="Thời gian" value={m.time} />
+                    <Row label="Trận đấu" value={m.match} />
+                    <Row label="Liên hệ" value={m.contact} />
+                    <Row label="Trang phục" value={m.uniform} />
+                    <Row label="Kết quả" value={m.result} />
+                    <Row label="CCF ghi bàn" value={m.goal} />
+
+                  </div>
+
+                )}
+
+              </div>
+
+            );
+
+          })}
+
         </div>
+
       ))}
+
     </section>
   );
 }
