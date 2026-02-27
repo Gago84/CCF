@@ -230,8 +230,14 @@ function Intro() {
                     <> — {getResultText(m.result)}</>
                   }
 
-                </div>
+                  {/* HIỆN NGAY CẦU THỦ GHI BÀN */}
+                  {hasResult && m.goal && (
+                    <div style={{ marginLeft: "22px", marginBottom: "4px" }}>
+                      <b>CCF ghi bàn:</b> {m.goal}
+                    </div>
+                  )}
 
+                </div>
 
                 {/* DETAIL */}
                 {(openMatchId === m.id || !hasResult) && (
