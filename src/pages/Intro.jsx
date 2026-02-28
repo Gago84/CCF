@@ -227,7 +227,7 @@ function Intro() {
                   ⚽ {m.day} — {formatDate(m.date)}
 
                   {hasResult &&
-                    <> — {getResultText(m.result)}</>
+                    <> — {getResultText(m.result)} ({m.result})</>
                   }
 
                   {/* HIỆN NGAY CẦU THỦ GHI BÀN */}
