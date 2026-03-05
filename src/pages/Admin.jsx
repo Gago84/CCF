@@ -21,7 +21,8 @@ const emptyForm = {
   contact: "",
   uniform: "",
   result: "",
-  goal: ""
+  goal: "",
+  highlight:""
 };
 
 function Admin() {
@@ -29,6 +30,7 @@ function Admin() {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  
 
   // Load matches
   const loadMatches = async () => {
@@ -108,6 +110,15 @@ function Admin() {
         <input name="uniform" placeholder="Trang phục" value={form.uniform} onChange={handleChange} />
         <input name="result" placeholder="Kết quả (vd: 2-0)" value={form.result} onChange={handleChange} />
         <textarea name="goal" placeholder="Ghi bàn (vd: Giang 1, Tùng 1)" value={form.goal} onChange={handleChange} />
+
+        {/* Thêm trường admin link video highlight trận đấu */}
+          <input
+            name="highlight"
+            type="text"
+            placeholder="Video highlight (YouTube ID, vd: HfB9WW-LWnE)"
+            value={form.highlight}
+            onChange={handleChange}
+          />
 
         <button type="submit" style={styles.saveBtn}>
           {editingId ? "💾 Cập nhật" : "✅ Lưu trận"}

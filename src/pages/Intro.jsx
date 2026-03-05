@@ -45,6 +45,20 @@ function Intro() {
     return "Thua";
   };
 
+  // Thêm biến số lịch sử đối đầu
+  const getHeadToHeadHistory = (currentMatch) => {
+  if (!currentMatch.match) return [];
+
+  return matches
+    .filter(
+      (m) =>
+        m.match === currentMatch.match && // cùng đội
+        m.result &&                        // đã có kết quả
+        m.date < currentMatch.date         // chỉ lấy quá khứ
+    )
+    .sort((a, b) => b.date.localeCompare(a.date)); // mới nhất trước
+  };
+
   useEffect(() => {
     const fetchMatches = async () => {
       try {
@@ -216,28 +230,29 @@ function Intro() {
               <div className="match-box" key={m.id}>
 
                 {/* HEADER */}
-                <div
-                  onClick={() => hasResult && toggleMatch(m.id)}
-                  style={{
-                    cursor: hasResult ? "pointer" : "default",
-                    fontWeight: "bold",
-                    marginBottom: "4px"
-                  }}
-                >
-                  ⚽ {m.day} — {formatDate(m.date)}
+                  <div
+                    onClick={() => hasResult && toggleMatch(m.id)}
+                    style={{
+                      cursor: hasResult ? "pointer" : "default",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                      color: hasResult ? "#1d4ed8" : "#000"
+                    }}
+                  >
+                    {hasResult && (openMatchId === m.id ? "▼ " : "▶ ")}
 
-                  {hasResult &&
-                    <> — {getResultText(m.result)} ({m.result})</>
-                  }
+                    {m.day} — {formatDate(m.date)}
 
-                  {/* HIỆN NGAY CẦU THỦ GHI BÀN */}
-                  {hasResult && m.goal && (
-                    <div style={{ marginLeft: "22px", marginBottom: "4px" }}>
-                      <b>CCF ghi bàn:</b> {m.goal}
-                    </div>
-                  )}
+                    {hasResult &&
+                      <> — {getResultText(m.result)} ({m.result})</>
+                    }
 
-                </div>
+                    {hasResult && m.goal && (
+                      <div style={{ marginLeft: "22px", marginBottom: "4px" }}>
+                        <b>CCF ghi bàn:</b> {m.goal}
+                      </div>
+                    )}
+                  </div>
 
                 {/* DETAIL */}
                 {(openMatchId === m.id || !hasResult) && (
@@ -247,25 +262,59 @@ function Intro() {
                     <Row label="Sân" value={m.field} />
                     <Row label="Thời gian" value={m.time} />
                     <Row label="Trận đấu" value={m.match} />
+
+                    {/* LỊCH SỬ ĐỐI ĐẦU */}
+                    {!m.result && m.match && (
+                      <div style={{ marginLeft: "12px", marginBottom: "6px" }}>
+                        <b>Lịch sử đối đầu:</b>
+                        {(() => {
+                          const history = getHeadToHeadHistory(m);
+
+                          if (history.length === 0) {
+                            return <div>Chưa đối đầu</div>;
+                          }
+
+                          return history.map((h) => (
+                            <div key={h.id}>
+                              - {formatDate(h.date)}, {getResultText(h.result)}, tỷ số {h.result}
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    )}
+
                     <Row label="Liên hệ" value={m.contact} />
                     <Row label="Trang phục" value={m.uniform} />
                     <Row label="Kết quả" value={m.result} />
                     <Row label="CCF ghi bàn" value={m.goal} />
 
+                    {/* VIDEO HIGHLIGHT EMBED */}
+                      {m.highlight && (
+                        <div style={{ marginTop: "8px", marginBottom: "10px" }}>
+                          <b>Video highlight:</b>
+
+                          <div style={{ marginTop: "6px" }}>
+                            <iframe
+                              width="100%"
+                              height="315"
+                              src={`https://www.youtube.com/embed/${m.highlight}`}
+                              title="YouTube video player"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{ borderRadius: "8px" }}
+                            ></iframe>
+                          </div>
+                        </div>
+                      )}
+
                   </div>
-
                 )}
-
               </div>
-
             );
-
           })}
-
         </div>
-
       ))}
-
     </section>
   );
 }
