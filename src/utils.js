@@ -33,6 +33,19 @@ export function convertToE164(phone) {
 
   return digits;
 }
+/**
+ * Convert E.164 phone to Vietnamese local format
+ * Example: +84982900985 -> 0982900985
+ */
+export function convertToLocalPhone(phone) {
+  if (!phone) return "";
+
+  if (phone.startsWith("+84")) {
+    return "0" + phone.slice(3);
+  }
+
+  return phone;
+}
 
 /**
  * Resets form state for React components.

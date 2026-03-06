@@ -6,7 +6,7 @@ import { clearForm, convertToE164, isValidVietnamesePhone } from "../utils";
 import {  doc,  setDoc,  serverTimestamp,  collection,  query,  where,  getDocs,} from "firebase/firestore";
 import "../styles/AuthForm.css";
 
-export default function SignUp() {
+export default function DangKy() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");

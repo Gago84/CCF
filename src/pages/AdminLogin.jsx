@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/config";
+import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
+  const navigate = useNavigate(); // ⭐ THÊM DÒNG NÀY
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
 
   const login = async (e) => {
     e.preventDefault();
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "/admin";
+
+      navigate("/admin"); // ✅ không reload
     } catch (e) {
       setErr("Sai email hoặc mật khẩu");
     }

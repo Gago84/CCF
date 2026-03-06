@@ -4,6 +4,7 @@ import { auth, db } from "../firebase/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
+import { convertToLocalPhone } from "../utils";
 
 export default function Profile() {
   const [userData, setUserData] = useState(null);
@@ -71,7 +72,7 @@ export default function Profile() {
 
   return (
     <div className="profile-page">
-      <h2>👤 Hồ sơ người dùng</h2>
+      <h2>👤 Thông tin thành viên</h2>
 
       <label>Họ tên:</label>
       <input
@@ -83,7 +84,7 @@ export default function Profile() {
       />
 
       <label>Số điện thoại:</label>
-      <input type="text" value={userData.phone} disabled />
+      <input type="text" value={convertToLocalPhone(userData.phone)} disabled />
 
       <label>Địa chỉ:</label>
       <input
@@ -98,7 +99,7 @@ export default function Profile() {
       />
 
       <p>
-        ⚽ Bàn thắng tích lũy: <b>{userData.points || 0}</b>
+        ⭐ Điểm tích lũy: <b>{userData.points || 0}</b>
       </p>
       
       <div className="profile-actions">

@@ -57,9 +57,3 @@ header h1 {
   border: 1px solid #ccc;
   border-bottom: 2px solid #fff;
 }
-
-/* Bọc user-area bên phải */
-.user-nav {
-  display: flex;
-  align-items: center;
-}

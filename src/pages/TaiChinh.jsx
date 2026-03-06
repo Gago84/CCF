@@ -1,12 +1,12 @@
-// src/pages/Combo.jsx
+// src/pages/TaiChinh.jsx
 import { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import "../styles/Combo.css";
+import "../styles/TaiChinh.css";
 import FinanceTable from "../components/FinanceTable";
 
 
-function Combo() {
+function TaiChinh() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -118,4 +118,4 @@ function Combo() {
   );
 }
 
-export default Combo;
+export default TaiChinh;
