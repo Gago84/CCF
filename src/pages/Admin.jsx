@@ -9,7 +9,9 @@ import {
   query,
   orderBy
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db, auth } from "../firebase/config";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const emptyForm = {
   date: "",
@@ -22,7 +24,7 @@ const emptyForm = {
   uniform: "",
   result: "",
   goal: "",
-  highlight:""
+  highlight: ""
 };
 
 function Admin() {
@@ -30,35 +32,59 @@ function Admin() {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
-  
+
+  const navigate = useNavigate();
+
+  // 🔐 Check login
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/admin-login");
+      } else {
+        loadMatches();
+      }
+    });
+
+    return () => unsub();
+  }, []);
 
   // Load matches
   const loadMatches = async () => {
     setLoading(true);
+
     const q = query(collection(db, "matches"), orderBy("date", "desc"));
     const snap = await getDocs(q);
-    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const data = snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
     setMatches(data);
     setLoading(false);
   };
 
-  useEffect(() => {
-    loadMatches();
-  }, []);
-
-  // Auto set month when choose date
+  // Form change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "date") {
       const m = value.slice(0, 7);
-      setForm({ ...form, date: value, month: m });
+
+      setForm(prev => ({
+        ...prev,
+        date: value,
+        month: m
+      }));
     } else {
-      setForm({ ...form, [name]: value });
+      setForm(prev => ({
+        ...prev,
+        [name]: value
+      }));
     }
   };
 
-  // Add or update
+  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,29 +93,50 @@ function Admin() {
       return;
     }
 
-    if (editingId) {
-      await updateDoc(doc(db, "matches", editingId), form);
-    } else {
-      await addDoc(collection(db, "matches"), form);
-    }
+    try {
+      if (editingId) {
+        await updateDoc(doc(db, "matches", editingId), form);
+      } else {
+        await addDoc(collection(db, "matches"), form);
+      }
 
-    setForm(emptyForm);
-    setEditingId(null);
-    loadMatches();
+      setForm(emptyForm);
+      setEditingId(null);
+
+      loadMatches();
+    } catch (err) {
+      console.error(err);
+      alert("Không có quyền cập nhật (Firestore rules)");
+    }
   };
 
   // Edit
   const handleEdit = (m) => {
-    setForm({ ...m });
-    setEditingId(m.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const { id, ...rest } = m;
+
+    setForm({
+      ...emptyForm,
+      ...rest
+    });
+
+    setEditingId(id);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
 
   // Delete
   const handleDelete = async (id) => {
-    if (window.confirm("Xóa trận này?")) {
+    if (!window.confirm("Xóa trận này?")) return;
+
+    try {
       await deleteDoc(doc(db, "matches", id));
       loadMatches();
+    } catch (err) {
+      console.error(err);
+      alert("Không có quyền xóa");
     }
   };
 
@@ -109,26 +156,34 @@ function Admin() {
         <input name="contact" placeholder="Liên hệ" value={form.contact} onChange={handleChange} />
         <input name="uniform" placeholder="Trang phục" value={form.uniform} onChange={handleChange} />
         <input name="result" placeholder="Kết quả (vd: 2-0)" value={form.result} onChange={handleChange} />
-        <textarea name="goal" placeholder="Ghi bàn (vd: Giang 1, Tùng 1)" value={form.goal} onChange={handleChange} />
 
-        {/* Thêm trường admin link video highlight trận đấu */}
-          <input
-            name="highlight"
-            type="text"
-            placeholder="Video highlight (YouTube ID, vd: HfB9WW-LWnE)"
-            value={form.highlight}
-            onChange={handleChange}
-          />
+        <textarea
+          name="goal"
+          placeholder="Ghi bàn (vd: Giang 1, Tùng 1)"
+          value={form.goal}
+          onChange={handleChange}
+        />
+
+        <input
+          name="highlight"
+          placeholder="Video highlight (YouTube ID)"
+          value={form.highlight}
+          onChange={handleChange}
+        />
 
         <button type="submit" style={styles.saveBtn}>
           {editingId ? "💾 Cập nhật" : "✅ Lưu trận"}
         </button>
 
         {editingId && (
-          <button type="button" style={styles.cancelBtn} onClick={() => {
-            setEditingId(null);
-            setForm(emptyForm);
-          }}>
+          <button
+            type="button"
+            style={styles.cancelBtn}
+            onClick={() => {
+              setEditingId(null);
+              setForm(emptyForm);
+            }}
+          >
             ❌ Hủy
           </button>
         )}
@@ -142,12 +197,23 @@ function Admin() {
       {matches.map(m => (
         <div key={m.id} style={styles.card}>
           <b>{m.date} — {m.match}</b>
-          <div style={styles.small}>{m.field} | {m.time}</div>
-          <div style={styles.small}>KQ: {m.result || "Chưa có"} | ⚽ {m.goal || "—"}</div>
+
+          <div style={styles.small}>
+            {m.field} | {m.time}
+          </div>
+
+          <div style={styles.small}>
+            KQ: {m.result || "Chưa có"} | ⚽ {m.goal || "—"}
+          </div>
 
           <div style={styles.actions}>
-            <button onClick={() => handleEdit(m)} style={styles.editBtn}>✏️ Sửa</button>
-            <button onClick={() => handleDelete(m.id)} style={styles.deleteBtn}>🗑 Xóa</button>
+            <button onClick={() => handleEdit(m)} style={styles.editBtn}>
+              ✏️ Sửa
+            </button>
+
+            <button onClick={() => handleDelete(m.id)} style={styles.deleteBtn}>
+              🗑 Xóa
+            </button>
           </div>
         </div>
       ))}
@@ -156,9 +222,6 @@ function Admin() {
 }
 
 export default Admin;
-
-/* ---------------- STYLES ---------------- */
-
 const styles = {
   page: {
     padding: 12,

@@ -30,25 +30,17 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Intro />} />
-
           <Route path="/TaiChinh" element={<TaiChinh />} />
-
           <Route path="/profile" element={<Profile />} />
-
-          <Route path="/login" element={<Login />} />
-
           <Route path="/dang-ky" element={<DangKy />} />
-
-          <Route
-            path="/admin"
-            element={user ? <Admin /> : <Navigate to="/admin-login" />}
-          />
-
-          <Route path="/admin-login" element={<AdminLogin />} />
-
-          {/* Chặn route admin */}
+          <Route path="/login" element={<Login />} />
+                    
+          {/* chỉ hiện trong localhost */}
           {import.meta.env.DEV && (
-            <Route path="/admin" element={<Admin />} />
+            <>
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
+            </>
           )}
           
         </Routes>
