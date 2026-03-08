@@ -1,31 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  query,
-  orderBy
-} from "firebase/firestore";
+import {collection,getDocs,addDoc,updateDoc,deleteDoc,doc,query,orderBy} from "firebase/firestore";
 import { db, auth } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 
-const emptyForm = {
-  date: "",
-  day: "",
-  month: "",
-  field: "",
-  time: "",
-  match: "",
-  contact: "",
-  uniform: "",
-  result: "",
-  goal: "",
-  highlight: ""
-};
+const emptyForm = {  date: "",  day: "",  month: "",  field: "",  time: "",  match: "",  contact: "",  uniform: "",  result: "",  goal: "",  highlight: ""};
 
 function Admin() {
   const [matches, setMatches] = useState([]);
@@ -34,6 +14,14 @@ function Admin() {
   const [editingId, setEditingId] = useState(null);
 
   const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/admin-login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    };
 
   // 🔐 Check login
   useEffect(() => {
@@ -143,6 +131,10 @@ function Admin() {
   return (
     <div style={styles.page}>
       <h2 style={styles.title}>🔐 ADMIN QUẢN LÝ TRẬN ĐẤU</h2>
+
+      <button onClick={handleLogout} style={styles.logoutBtn}>
+        🚪 Đăng xuất
+      </button>
 
       {/* FORM */}
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -286,5 +278,15 @@ const styles = {
     border: "none",
     padding: 8,
     borderRadius: 6
-  }
+  },
+  logoutBtn: {
+  background: "#111",
+  color: "#fff",
+  border: "none",
+  padding: "8px 12px",
+  borderRadius: 8,
+  cursor: "pointer",
+  marginBottom: 10
+},
+  
 };

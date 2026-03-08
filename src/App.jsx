@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import { useEffect, useState } from "react";
 import { auth } from "./firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
-import { Navigate } from "react-router-dom";
 
 function App() {
 
