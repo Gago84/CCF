@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { authAdmin } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
@@ -13,7 +13,7 @@ function AdminLogin() {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(authAdmin, email, password);
 
       navigate("/admin"); // ✅ không reload
     } catch (e) {

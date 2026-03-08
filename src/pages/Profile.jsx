@@ -1,10 +1,11 @@
 // src/pages/Profile.jsx
 import { useEffect, useState } from "react";
-import { auth, db } from "../firebase/config";
+import { authUser, db } from "../firebase/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import { convertToLocalPhone } from "../utils";
+import { signOut } from "firebase/auth";
 
 export default function Profile() {
   const [userData, setUserData] = useState(null);
@@ -13,7 +14,7 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const user = auth.currentUser;
+      const user = authUser.currentUser;
       if (!user) {
         navigate("/login");
         return;
@@ -36,7 +37,7 @@ export default function Profile() {
   // ✅ Handle save changes
   const handleSave = async () => {
     try {
-      const user = auth.currentUser;
+      const user = authUser.currentUser;
       if (!user) return;
 
       const docRef = doc(db, "users", user.uid);
@@ -59,7 +60,7 @@ export default function Profile() {
   // ✅ Handle logout
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await signOut(authUser);
       navigate("/login");
     } catch (error) {
       console.error("❌ Error logging out:", error);

@@ -46,8 +46,7 @@ function Header() {
       console.log("📄 Doc exists:", docSnap.exists());
 
       if (!docSnap.exists()) {
-        console.log("➡️ Chưa đăng ký → /dang-ky");
-        navigate("/dang-ky");
+        console.log("⏳ User đang tạo profile...");
         return;
       }
 
@@ -61,7 +60,7 @@ function Header() {
         return;
       }
 
-      navigate("/dang-ky");
+      navigate("/profile");
     }
 
   });
@@ -88,8 +87,8 @@ function Header() {
           </NavLink>
 
           {!user && (
-            <NavLink to="/login">
-              Đăng nhập
+            <NavLink to="/dang-ky">
+              Đăng ký
             </NavLink>
           )}
 
@@ -99,7 +98,8 @@ function Header() {
             </NavLink>
           )}
 
-          {user && role === "admin" && (
+          {/* DEV luôn hiện admin */}
+          {import.meta.env.DEV && (
             <NavLink to="/admin">
               Admin
             </NavLink>

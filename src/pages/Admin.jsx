@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import {collection,getDocs,addDoc,updateDoc,deleteDoc,doc,query,orderBy} from "firebase/firestore";
-import { db, auth } from "../firebase/config";
+import { db, authAdmin } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { getDoc } from "firebase/firestore";
 
 const emptyForm = {  date: "",  day: "",  month: "",  field: "",  time: "",  match: "",  contact: "",  uniform: "",  result: "",  goal: "",  highlight: ""};
 
@@ -16,7 +17,7 @@ function Admin() {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await signOut(authAdmin);
       navigate("/admin-login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -24,17 +25,29 @@ function Admin() {
     };
 
   // 🔐 Check login
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        navigate("/admin-login");
-      } else {
-        loadMatches();
-      }
-    });
+useEffect(() => {
+  const unsub = onAuthStateChanged(authAdmin, async (user) => {
 
-    return () => unsub();
-  }, []);
+    console.log("Auth user:", user);
+
+    if (!user) {
+      navigate("/admin-login");
+      return;
+    }
+
+    // DEBUG USER ROLE
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    console.log("UID:", user.uid);
+    console.log("User doc exists:", snap.exists());
+    console.log("User data:", snap.data());
+
+    loadMatches();
+  });
+
+  return () => unsub();
+}, []);
 
   // Load matches
   const loadMatches = async () => {

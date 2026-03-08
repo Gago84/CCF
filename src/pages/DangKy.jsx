@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase/config";
+import { authUser, db } from "../firebase/config";
 import { RecaptchaVerifier, signInWithPhoneNumber, updateProfile } from "firebase/auth";
 import { clearForm, convertToE164, isValidVietnamesePhone } from "../utils";
 import {  doc,  setDoc,  serverTimestamp,  collection,  query,  where,  getDocs,} from "firebase/firestore";
@@ -31,7 +31,7 @@ export default function DangKy() {
               console.warn("⚠️ reCAPTCHA expired. Please try again.");
             },
           },
-          auth
+          authUser
         );
         console.log("✅ reCAPTCHA verifier đã khởi tạo", window.recaptchaVerifier);
       } catch (err) {
@@ -70,7 +70,7 @@ export default function DangKy() {
 
       if (!appVerifier) throw new Error("reCAPTCHA chưa sẵn sàng");
 
-      const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      const result = await signInWithPhoneNumber(authUser, phoneNumber, appVerifier);
 
       setConfirmationResult(result);
       setShowOtpSection(true);
@@ -108,6 +108,7 @@ export default function DangKy() {
       uid: user.uid,
       name: name,
       phone: user.phoneNumber,
+      role: "user",   // ⭐ QUAN TRỌNG
       createdAt: serverTimestamp(),
 
       note: "",
@@ -123,7 +124,7 @@ export default function DangKy() {
       alert("✅ Số điện thoại được xác thực, hồ sơ được lưu, chào mừng bạn " + name);
 
       clearForm(setName, setPhone, setOtp);
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       console.error("❌ OTP verification failed:", error);
       alert("❌ " + error.message);
