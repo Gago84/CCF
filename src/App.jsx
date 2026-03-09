@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import { useEffect, useState } from "react";
 import { auth } from "./firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
+import ThongKe from "./pages/ThongKe";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/dang-ky" element={<DangKy />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/thongke" element={<ThongKe />} />
                     
           {/* chỉ hiện trong localhost */}
           {import.meta.env.DEV && (

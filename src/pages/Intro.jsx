@@ -168,49 +168,6 @@ function Intro() {
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
 
-      {/* ===== STATS ===== */}
-      <div className="stats-box">
-
-        <h1>📊 Thống kê CCF năm 2026</h1>
-
-        <p>⚽ Tổng số trận: <b>{total}</b></p>
-
-        <p>
-          ✅ Thắng: <b>{win}</b> |
-          🤝 Hòa: <b>{draw}</b> |
-          ❌ Thua: <b>{lose}</b>
-        </p>
-
-        <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
-
-        <h3>🔥 Vua phá lưới theo tháng</h3>
-
-        {topScorerEachMonth.map((m) => (
-          <p key={m.month}>
-            👑 Tháng {formatMonthTitle(m.month)}:
-            <b> {m.name}</b> ({m.goals} bàn)
-          </p>
-        ))}
-
-        <hr />
-
-        <h3>🔥 Vua phá lưới 2026</h3>
-
-        {topScorers.length === 0 && <p>Chưa có dữ liệu.</p>}
-
-        <ul>
-          {topScorers.map((p) => (
-            <li key={p.name}>
-              {p.name}: <b>{p.goals}</b> bàn
-            </li>
-          ))}
-        </ul>
-
-        <hr />
-
-      </div>
-
-
       {/* ===== LỊCH ===== */}
       {Object.keys(groupByMonth).map((month) => (
 

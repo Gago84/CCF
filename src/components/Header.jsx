@@ -63,7 +63,7 @@ function Header() {
         <nav className="main-nav">
 
           <NavLink to="/" end>            Trận đấu          </NavLink>
-
+          <NavLink to="/thongke">Thống kê</NavLink>
           <NavLink to="/TaiChinh">            Tài chính          </NavLink>
 
         {/* chưa login */}
