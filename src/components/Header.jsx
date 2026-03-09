@@ -10,7 +10,6 @@ function Header() {
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [role, setRole] = useState(null);
-  const [hasUser, setHasUser] = useState(false);
 
   const navigate = useNavigate();
 
@@ -21,13 +20,7 @@ function Header() {
       if (!firebaseUser) {
         setUser(null);
         setName("");
-        setRole(null);
-        const existed = localStorage.getItem("ccf_user_registered");
-        if (existed) {
-          setHasUser(true); // đã từng đăng ký
-        } else {
-          setHasUser(false); // chưa từng đăng ký
-        }
+        setRole(null);       
         return;
       }
       setUser(firebaseUser);
@@ -45,6 +38,7 @@ function Header() {
         console.log("📄 Doc exists:", docSnap.exists());
         if (!docSnap.exists()) {
           console.log("⏳ User đang tạo profile...");
+          setRole(null);
           return;
         }
         const data = docSnap.data();
@@ -52,15 +46,12 @@ function Header() {
         if (data.role === "user") {
           setRole("user");
           setName(data.name || "");
-          // đánh dấu user đã tồn tại
-          localStorage.setItem("ccf_user_registered", "true");
-          setHasUser(true);
           return;
         }
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, []);
 
   return (
     <header>
@@ -75,21 +66,14 @@ function Header() {
 
           <NavLink to="/TaiChinh">            Tài chính          </NavLink>
 
-        {/* 1️⃣ chưa từng đăng ký */}
-        {!user && !hasUser && (
-          <NavLink to="/dang-ky">
-            Đăng ký
-          </NavLink>
-        )}
-
-        {/* 2️⃣ đã đăng ký nhưng đang logout */}
-        {!user && hasUser && (
+        {/* chưa login */}
+        {!user && (
           <NavLink to="/login">
             Đăng nhập
           </NavLink>
         )}
 
-        {/* 3️⃣ đã login */}
+        {/* đã login */}
         {user && role === "user" && (
           <NavLink to="/profile">
             {name || "Profile"}
