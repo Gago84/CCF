@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {collection,getDocs,addDoc,updateDoc,deleteDoc,doc,query,orderBy} from "firebase/firestore";
-import { db, authAdmin } from "../firebase/config";
+import { db, auth } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -17,7 +17,7 @@ function Admin() {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await signOut(authAdmin);
+      await signOut(auth);
       navigate("/admin-login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -26,7 +26,7 @@ function Admin() {
 
   // 🔐 Check login
 useEffect(() => {
-  const unsub = onAuthStateChanged(authAdmin, async (user) => {
+  const unsub = onAuthStateChanged(auth, async (user) => {
 
     console.log("Auth user:", user);
 

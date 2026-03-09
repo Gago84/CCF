@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authUser, db } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import { RecaptchaVerifier, signInWithPhoneNumber, updateProfile } from "firebase/auth";
 import { clearForm, convertToE164, isValidVietnamesePhone } from "../utils";
 import {  doc,  setDoc,  serverTimestamp,  collection,  query,  where,  getDocs,} from "firebase/firestore";
@@ -31,7 +31,7 @@ export default function DangKy() {
               console.warn("⚠️ reCAPTCHA expired. Please try again.");
             },
           },
-          authUser
+          auth
         );
         console.log("✅ reCAPTCHA verifier đã khởi tạo", window.recaptchaVerifier);
       } catch (err) {
@@ -70,7 +70,7 @@ export default function DangKy() {
 
       if (!appVerifier) throw new Error("reCAPTCHA chưa sẵn sàng");
 
-      const result = await signInWithPhoneNumber(authUser, phoneNumber, appVerifier);
+      const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
 
       setConfirmationResult(result);
       setShowOtpSection(true);

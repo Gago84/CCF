@@ -13,14 +13,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// APP CHO USER
-export const appUser = initializeApp(firebaseConfig, "userApp");
-export const authUser = getAuth(appUser);
+// 1. Init App
+const app = initializeApp(firebaseConfig);
 
-// APP CHO ADMIN
-export const appAdmin = initializeApp(firebaseConfig, "adminApp");
-export const authAdmin = getAuth(appAdmin);
+// 2. Init Auth & Firestore
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-// Firestore dùng chung
-export const db = getFirestore(appUser);
-
+export default app;

@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authUser } from "../firebase/config";
+import { auth } from "../firebase/config";
 import { signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
 import { isValidVietnamesePhone, convertToE164, clearForm } from "../utils";
 import "../styles/AuthForm.css";
@@ -31,7 +31,7 @@ export default function Login() {
               console.warn("⚠️ reCAPTCHA expired. Please retry.");
             },
           },
-          authUser
+          auth
         );
         console.log("✅ reCAPTCHA verifier initialized", window.recaptchaVerifier);
       } catch (err) {
@@ -58,7 +58,7 @@ export default function Login() {
       const appVerifier = window.recaptchaVerifier;
       if (!appVerifier) throw new Error("reCAPTCHA not ready yet");
 
-      const result = await signInWithPhoneNumber(authUser, formattedPhone, appVerifier);
+      const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
       setConfirmationResult(result);
       setShowOtpSection(true);
 
