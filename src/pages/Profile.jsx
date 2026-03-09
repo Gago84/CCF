@@ -60,6 +60,8 @@ export default function Profile() {
   // ✅ Handle logout
   const handleLogout = async () => {
     try {
+          // ⭐ ĐÁNH DẤU USER ĐÃ TỪNG ĐĂNG KÝ
+    localStorage.setItem("ccf_user_registered", "true");
       await signOut(auth);
       navigate("/login");
     } catch (error) {

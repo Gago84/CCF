@@ -121,6 +121,9 @@ export default function DangKy() {
       points: 0, // ⭐ tổng điểm tích lũy của user
     });
 
+    // ⭐ THÊM DÒNG NÀY
+    localStorage.setItem("ccf_user_registered", "true");
+
       alert("✅ Số điện thoại được xác thực, hồ sơ được lưu, chào mừng bạn " + name);
 
       clearForm(setName, setPhone, setOtp);
@@ -144,6 +147,7 @@ export default function DangKy() {
               type="text"
               placeholder="Họ tên"
               value={name}
+              required
               onChange={(e) => setName(e.target.value)}
             />
             <input

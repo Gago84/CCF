@@ -10,63 +10,56 @@ function Header() {
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [role, setRole] = useState(null);
+  const [hasUser, setHasUser] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-
-  const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-
-    console.log("🔥 Auth:", firebaseUser);
-
-    if (!firebaseUser) {
-      setUser(null);
-      setName("");
-      setRole(null);
-      return;
-    }
-
-    setUser(firebaseUser);
-
-    console.log("📧 Email:", firebaseUser.email);
-    console.log("📱 Phone:", firebaseUser.phoneNumber);
-
-    // ADMIN LOGIN (EMAIL)
-    if (firebaseUser.email) {
-      setRole("admin");
-      return;
-    }
-
-    // USER LOGIN (PHONE)
-    if (firebaseUser.phoneNumber) {
-
-      const docRef = doc(db, "users", firebaseUser.uid);
-      const docSnap = await getDoc(docRef);
-
-      console.log("📄 Doc exists:", docSnap.exists());
-
-      if (!docSnap.exists()) {
-        console.log("⏳ User đang tạo profile...");
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log("🔥 Auth:", firebaseUser);
+      // CHƯA LOGIN
+      if (!firebaseUser) {
+        setUser(null);
+        setName("");
+        setRole(null);
+        const existed = localStorage.getItem("ccf_user_registered");
+        if (existed) {
+          setHasUser(true); // đã từng đăng ký
+        } else {
+          setHasUser(false); // chưa từng đăng ký
+        }
         return;
       }
-
-      const data = docSnap.data();
-
-      console.log("📊 Data:", data);
-
-      if (data.role === "user") {
-        setRole("user");
-        setName(data.name || "");
+      setUser(firebaseUser);
+      console.log("📧 Email:", firebaseUser.email);
+      console.log("📱 Phone:", firebaseUser.phoneNumber);
+      // ⭐ ADMIN LOGIN (EMAIL)
+      if (firebaseUser.email) {
+        setRole("admin");
         return;
       }
-
-      navigate("/profile");
-    }
-
-  });
-
-  return () => unsubscribe();
-
+      // ⭐ USER LOGIN (PHONE)
+      if (firebaseUser.phoneNumber) {
+        const docRef = doc(db, "users", firebaseUser.uid);
+        const docSnap = await getDoc(docRef);
+        console.log("📄 Doc exists:", docSnap.exists());
+        if (!docSnap.exists()) {
+          console.log("⏳ User đang tạo profile...");
+          return;
+        }
+        const data = docSnap.data();
+        console.log("📊 Data:", data);
+        if (data.role === "user") {
+          setRole("user");
+          setName(data.name || "");
+          // đánh dấu user đã tồn tại
+          localStorage.setItem("ccf_user_registered", "true");
+          setHasUser(true);
+          return;
+        }
+      }
+    });
+    return () => unsubscribe();
   }, [navigate]);
 
   return (
@@ -78,25 +71,30 @@ function Header() {
 
         <nav className="main-nav">
 
-          <NavLink to="/" end>
-            Trận đấu
+          <NavLink to="/" end>            Trận đấu          </NavLink>
+
+          <NavLink to="/TaiChinh">            Tài chính          </NavLink>
+
+        {/* 1️⃣ chưa từng đăng ký */}
+        {!user && !hasUser && (
+          <NavLink to="/dang-ky">
+            Đăng ký
           </NavLink>
+        )}
 
-          <NavLink to="/TaiChinh">
-            Tài chính
+        {/* 2️⃣ đã đăng ký nhưng đang logout */}
+        {!user && hasUser && (
+          <NavLink to="/login">
+            Đăng nhập
           </NavLink>
+        )}
 
-          {!user && (
-            <NavLink to="/dang-ky">
-              Đăng ký
-            </NavLink>
-          )}
-
-          {user && role === "user" && (
-            <NavLink to="/profile">
-              {name || "Profile"}
-            </NavLink>
-          )}
+        {/* 3️⃣ đã login */}
+        {user && role === "user" && (
+          <NavLink to="/profile">
+            {name || "Profile"}
+          </NavLink>
+        )}
 
           {/* DEV luôn hiện admin */}
           {import.meta.env.DEV && (
