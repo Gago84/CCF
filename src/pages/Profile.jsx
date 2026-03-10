@@ -1,7 +1,7 @@
 // src/pages/Profile.jsx
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/config";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc,getDocs, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import { convertToLocalPhone } from "../utils";
@@ -11,6 +11,8 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [yearGoals, setYearGoals] = useState(0);
+  const [monthGoals, setMonthGoals] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -34,41 +36,79 @@ export default function Profile() {
     fetchUserData();
   }, [navigate]);
 
-  // ✅ Handle save changes
-  const handleSave = async () => {
-    try {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const docRef = doc(db, "users", user.uid);
-      await updateDoc(docRef, {
-        name: userData.name,
-        note: userData.note,
-        map: {
-          ...userData.map,
-          address: userData.map.address,
-        },
+  useEffect(() => {
+    if (!userData) return;
+    const fetchGoals = async () => {
+      const querySnapshot = await getDocs(collection(db, "matches"));
+      let yearTotal = 0;
+      let monthTotal = 0;
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (!data.goal) return;
+        const goals = data.goal.split(",");
+        goals.forEach(g => {
+          const parts = g.trim().split(" ");
+          const goalNum = parseInt(parts.pop());   // lấy số cuối
+          const player = parts.join(" ");          // phần còn lại là tên
+          if (  player.trim().toLowerCase() ===
+  userData.name.trim().toLowerCase()) {
+            const [year, month, day] = data.date.split("-");
+            if (parseInt(year) === currentYear) {
+              yearTotal += goalNum;
+            }
+            if (
+              parseInt(year) === currentYear &&
+              parseInt(month) === currentMonth
+            ) {
+              monthTotal += goalNum;
+            }
+          }
+        });
       });
+      setYearGoals(yearTotal);
+      setMonthGoals(monthTotal);
+    };
+    fetchGoals();
+  }, [userData]);
 
-      alert("✅ Thông tin đã được cập nhật!");
-    } catch (error) {
-      console.error("❌ Error updating profile:", error);
-      alert("Lỗi khi lưu thông tin: " + error.message);
-    }
-  };
+    // ✅ Handle save changes
+    const handleSave = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
 
-  // ✅ Handle logout
-  const handleLogout = async () => {
-    try {
-          // ⭐ ĐÁNH DẤU USER ĐÃ TỪNG ĐĂNG KÝ
+        const docRef = doc(db, "users", user.uid);
+        await updateDoc(docRef, {
+          name: userData.name,
+          note: userData.note,
+          map: {
+            ...userData.map,
+            address: userData.map.address,
+          },
+        });
 
-      await signOut(auth);
-      navigate("/login");
-    } catch (error) {
-      console.error("❌ Error logging out:", error);
-      alert("Lỗi khi đăng xuất: " + error.message);
-    }
-  };
+        alert("✅ Thông tin đã được cập nhật!");
+      } catch (error) {
+        console.error("❌ Error updating profile:", error);
+        alert("Lỗi khi lưu thông tin: " + error.message);
+      }
+    };
+
+    // ✅ Handle logout
+    const handleLogout = async () => {
+      try {
+            // ⭐ ĐÁNH DẤU USER ĐÃ TỪNG ĐĂNG KÝ
+
+        await signOut(auth);
+        navigate("/login");
+      } catch (error) {
+        console.error("❌ Error logging out:", error);
+        alert("Lỗi khi đăng xuất: " + error.message);
+      }
+    };
 
   if (loading) return <p>Loading...</p>;
   if (!userData) return <p>No user data found.</p>;
@@ -101,9 +141,15 @@ export default function Profile() {
         }
       />
 
-      <p>
-        ⭐ Điểm tích lũy: <b>{userData.points || 0}</b>
-      </p>
+<h3>⚽ Thống kê cá nhân</h3>
+
+<p>🔥 Bàn thắng năm {new Date().getFullYear()}:
+<b>{yearGoals}</b></p>
+
+<p>
+📅 Bàn thắng tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}:
+<b>{monthGoals}</b>
+</p>
       
       <div className="profile-actions">
         <button onClick={handleSave} className="profile-btn-save">
