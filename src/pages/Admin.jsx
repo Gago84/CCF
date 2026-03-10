@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { getDoc } from "firebase/firestore";
 
-const emptyForm = {  date: "",  day: "",  month: "",  field: "",  time: "",  match: "",  contact: "",  uniform: "",  result: "",  goal: "",  highlight: ""};
+const emptyForm = {  date: "",  day: "",  month: "",  field: "",  time: "",  match: "",  contact: "",  uniform: "",  result: "",  goal: "", assist: "",  highlight: ""};
 
 function Admin() {
   const [matches, setMatches] = useState([]);
@@ -168,6 +168,12 @@ useEffect(() => {
           value={form.goal}
           onChange={handleChange}
         />
+        <textarea
+          name="assist"
+          placeholder="Kiến tạo (vd: Bình 1, Khánh 1)"
+          value={form.assist}
+          onChange={handleChange}
+        />
 
         <input
           name="highlight"
@@ -207,9 +213,9 @@ useEffect(() => {
             {m.field} | {m.time}
           </div>
 
-          <div style={styles.small}>
-            KQ: {m.result || "Chưa có"} | ⚽ {m.goal || "—"}
-          </div>
+<div style={styles.small}>
+  KQ: {m.result || "Chưa có"} | ⚽ {m.goal || "—"} | 🎯 {m.assist || "—"}
+</div>
 
           <div style={styles.actions}>
             <button onClick={() => handleEdit(m)} style={styles.editBtn}>
