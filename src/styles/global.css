@@ -54,11 +54,6 @@ main {
   padding-left: 0;
 }
 
-.intro-page ul li::before {
-  content: '👉 ';
-  color: #ff6600;
-}
-
 /* Add style for button in intro page */
 .intro-page button {
   background-color: #ff6600; /* orange */

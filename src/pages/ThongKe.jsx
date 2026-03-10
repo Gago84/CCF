@@ -43,53 +43,71 @@ let totalGoals = 0;
 let playerStats = {};
 let assistStats = {};
 
-matches2026.forEach(m => {
+        // ===== MVP THEO THÁNG (GOAL + ASSIST) =====
+        let mvpByMonth = {};
+        matches.forEach((m) => {
+          if (!m.result) return;
+          const monthKey = m.date.slice(0,7);
+          if (!mvpByMonth[monthKey])
+            mvpByMonth[monthKey] = {};
+          // GOAL
+          if (m.goal) {
+            const players = m.goal.split(",");
+            players.forEach(p => {
+              const parts = p.trim().split(" ");
+              const goals = Number(parts.pop());
+              const name = parts.join(" ");
+              if (!mvpByMonth[monthKey][name])
+                mvpByMonth[monthKey][name] = {goals:0, assists:0};
+              mvpByMonth[monthKey][name].goals += goals;
+            });
+          }
+          // ASSIST
+          if (m.assist) {
+            const players = m.assist.split(",");
+            players.forEach(p => {
+              const parts = p.trim().split(" ");
+              const assists = Number(parts.pop());
+              const name = parts.join(" ");
+              if (!mvpByMonth[monthKey][name])
+                mvpByMonth[monthKey][name] = {goals:0, assists:0};
+              mvpByMonth[monthKey][name].assists += assists;
+            });
+          }
+        });
+
+    matches2026.forEach(m => {
+        total++;
+        const [a, b] = m.result.split("-").map(Number);
+        totalGoals += a;
+        if (a > b) win++;
+        else if (a === b) draw++;
+        else lose++;
+        // ===== BÀN THẮNG =====
+        if (m.goal) {
+          const players = m.goal.split(",");
+          players.forEach(p => {
+            const parts = p.trim().split(" ");
+            const goals = Number(parts.pop());
+            const name = parts.join(" ");
+            if (!playerStats[name]) playerStats[name] = 0;
+            playerStats[name] += goals;
+          });
+        }
+        // ===== KIẾN TẠO =====
+        if (m.assist) {
+          const players = m.assist.split(",");
+          players.forEach(p => {
+            const parts = p.trim().split(" ");
+            const assists = Number(parts.pop());
+            const name = parts.join(" ");
+            if (!assistStats[name]) assistStats[name] = 0;
+            assistStats[name] += assists;
+          });
+        }
+    });
 
 
-total++;
-
-const [a, b] = m.result.split("-").map(Number);
-totalGoals += a;
-
-if (a > b) win++;
-else if (a === b) draw++;
-else lose++;
-
-// ===== BÀN THẮNG =====
-if (m.goal) {
-  const players = m.goal.split(",");
-
-  players.forEach(p => {
-
-    const parts = p.trim().split(" ");
-    const goals = Number(parts.pop());
-    const name = parts.join(" ");
-
-    if (!playerStats[name]) playerStats[name] = 0;
-    playerStats[name] += goals;
-
-  });
-}
-
-// ===== KIẾN TẠO =====
-if (m.assist) {
-
-  const players = m.assist.split(",");
-
-  players.forEach(p => {
-
-    const parts = p.trim().split(" ");
-    const assists = Number(parts.pop());
-    const name = parts.join(" ");
-
-    if (!assistStats[name]) assistStats[name] = 0;
-    assistStats[name] += assists;
-
-  });
-}
-
-
-});
 
 const topScorers = Object.entries(playerStats)
 .map(([name, goals]) => ({ name, goals }))
@@ -98,6 +116,78 @@ const topScorers = Object.entries(playerStats)
 const topAssists = Object.entries(assistStats)
 .map(([name, assists]) => ({ name, assists }))
 .sort((a, b) => b.assists - a.assists);
+
+      // ===== MVP CẢ NĂM =====
+      let mvpYear = {};
+      matches2026.forEach(m => {
+        // GOAL
+        if (m.goal) {
+          const players = m.goal.split(",");
+          players.forEach(p => {
+            const parts = p.trim().split(" ");
+            const goals = Number(parts.pop());
+            const name = parts.join(" ");
+            if (!mvpYear[name])
+              mvpYear[name] = {goals:0, assists:0};
+            mvpYear[name].goals += goals;
+          });
+        }
+        // ASSIST
+        if (m.assist) {
+          const players = m.assist.split(",");
+          players.forEach(p => {
+            const parts = p.trim().split(" ");
+            const assists = Number(parts.pop());
+            const name = parts.join(" ");
+            if (!mvpYear[name])
+              mvpYear[name] = {goals:0, assists:0};
+            mvpYear[name].assists += assists;
+          });
+        }
+      });
+
+      const topMvpYear = Object.entries(mvpYear)
+      .map(([name, stats]) => ({
+        name,
+        goals: stats.goals,
+        assists: stats.assists,
+        total: stats.goals + stats.assists
+      }))
+      .sort((a,b)=>{
+
+        if (b.total !== a.total)
+          return b.total - a.total;
+
+        return b.goals - a.goals;
+
+      });
+
+          const topMvpEachMonth = Object.entries(mvpByMonth)
+          .map(([month, players]) => {
+
+            const topPlayers = Object.entries(players)
+              .map(([name, stats]) => ({
+                name,
+                goals: stats.goals,
+                assists: stats.assists,
+                total: stats.goals + stats.assists
+              }))
+              .sort((a,b)=>{
+
+                // 1️⃣ tổng bàn + kiến tạo
+                if (b.total !== a.total)
+                  return b.total - a.total;
+
+                // 2️⃣ nếu bằng tổng → ai ghi nhiều bàn hơn
+                return b.goals - a.goals;
+
+              })
+              .slice(0,3);
+
+            return {month, players:topPlayers};
+
+          })
+          .sort((a,b)=> b.month.localeCompare(a.month));
 
 // ===== THỐNG KÊ THEO THÁNG =====
 let scorersByMonth = {};
@@ -202,45 +292,69 @@ return (
 
   <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
 
-  {/* ===== 2 CỘT ===== */}
-  <div style={{display:"flex", gap:"80px"}}>
+  {/* ===== 3 CỘT ===== */}
+      <div style={{display:"flex", gap:"20px"}}>
 
-    <div>
-      <h3>🔥 Vua phá lưới 2026</h3>
-      <ul>
-        {topScorers.map(p => (
+        <div>
+          <h3>🔥 Vua phá lưới 2026</h3>
+          <ul>
+            {topScorers.map((p,i)=>{
+            const medals=["🥇","🥈","🥉"];
+            return(
+            <li key={p.name}>
+            {i < 3 ? medals[i] : "👉"} {p.name}: <b>{p.goals}</b> bàn
+            </li>
+            );
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <h3>🎯 Vua kiến tạo 2026</h3>
+          <ul>
+            {topAssists.map((p,i)=>{
+            const medals=["🥇","🥈","🥉"];
+            return(
+            <li key={p.name}>
+            {i < 3 ? medals[i] : "👉"} {p.name}: <b>{p.assists}</b>
+            </li>
+            );
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <h3>⭐ Xuất sắc nhất năm 2026</h3>
+        <ul>
+          {topMvpYear.map((p,i)=>{
+          const medals = ["🥇","🥈","🥉"];
+          return(
           <li key={p.name}>
-            {p.name}: <b>{p.goals}</b> bàn
+          {i < 3 ? medals[i] : "👉"} {p.name} ({p.goals}⚽ + {p.assists}🎯)
           </li>
-        ))}
-      </ul>
-    </div>
+          );
+          })}
+        </ul>
 
-    <div>
-      <h3>🎯 Vua kiến tạo 2026</h3>
-      <ul>
-        {topAssists.map(p => (
-          <li key={p.name}>
-            {p.name}: <b>{p.assists}</b>
-          </li>
-        ))}
-      </ul>
-    </div>
+        </div>
 
-  </div>
+      </div>
 
   {/* ===== THEO THÁNG ===== */}
   <table style={{width:"100%", borderCollapse:"collapse", marginTop:"20px"}}>
 
     <thead>
       <tr>
-      <th style={{border:"1px solid #ccc", padding:"8px"}}>
-      🔥 Vua phá lưới theo tháng
-      </th>
+        <th style={{border:"1px solid #ccc", padding:"8px"}}>
+        🔥 Vua phá lưới theo tháng
+        </th>
 
-      <th style={{border:"1px solid #ccc", padding:"8px"}}>
-      🎯 Vua kiến tạo theo tháng
-      </th>
+        <th style={{border:"1px solid #ccc", padding:"8px"}}>
+        🎯 Vua kiến tạo theo tháng
+        </th>
+        <th style={{border:"1px solid #ccc", padding:"8px"}}>
+        ⭐ Xuất sắc nhất
+        </th>
       </tr>
     </thead>
 
@@ -254,52 +368,53 @@ return (
 
       <tr key={m.month}>
 
-      <td style={{border:"1px solid #ccc", padding:"8px", verticalAlign:"top"}}>
+        <td style={{border:"1px solid #ccc", padding:"8px", verticalAlign:"top"}}>
+          <p>👑 Tháng {formatMonthTitle(m.month)}</p>
+          {m.players.map((p,i)=>{
+          const medals=["🥇","🥈","🥉"];
+            return(
+              <p key={p.name}>
+              {medals[i]} {p.name} ({p.goals})
+              </p>
+            );
+          })}
 
-      <p>👑 Tháng {formatMonthTitle(m.month)}</p>
+        </td>
 
-      {m.players.map((p,i)=>{
-
-      const medals=["🥇","🥈","🥉"];
-
-      return(
-      <p key={p.name}>
-      {medals[i]} {p.name} ({p.goals})
-      </p>
-      );
-
-      })}
-
-      </td>
-
-      <td style={{border:"1px solid #ccc", padding:"8px", verticalAlign:"top"}}>
-
-      {assists && (
-      <>
-      <p>👑 Tháng {formatMonthTitle(assists.month)}</p>
-
-      {assists.players.map((p,i)=>{
-
-      const medals=["🥇","🥈","🥉"];
-
-      return(
-      <p key={p.name}>
-      {medals[i]} {p.name} ({p.assists})
-      </p>
-      );
-
-      })}
-      </>
-      )}
-
-      </td>
+        <td style={{border:"1px solid #ccc", padding:"8px", verticalAlign:"top"}}>
+          {assists && (
+          <>
+            <p>👑 Tháng {formatMonthTitle(assists.month)}</p>
+            {assists.players.map((p,i)=>{
+            const medals=["🥇","🥈","🥉"];
+              return(
+                <p key={p.name}>
+                {medals[i]} {p.name} ({p.assists})
+                </p>
+              );
+            })}
+          </>
+          )}
+        </td>
+        <td style={{border:"1px solid #ccc", padding:"8px", verticalAlign:"top"}}>
+          {topMvpEachMonth[index] && (
+          <>
+            <p>👑 Tháng {formatMonthTitle(topMvpEachMonth[index].month)}</p>
+              {topMvpEachMonth[index].players.map((p,i)=>{
+              const medals=["🥇","🥈","🥉"];
+              return(
+                <p key={p.name}>
+                {medals[i]} {p.name} ({p.goals}⚽ + {p.assists}🎯)
+                </p>
+              );
+            })}
+          </>
+          )}
+        </td>
 
       </tr>
-
       );
-
       })}
-
     </tbody>
   </table>
 
