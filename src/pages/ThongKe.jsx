@@ -5,27 +5,33 @@ import { db } from "../firebase/config";
 function ThongKe() {
 
 const [matches, setMatches] = useState([]);
-
+const [members, setMembers] = useState([]);
 const formatMonthTitle = (monthStr) => {
 const [year, month] = monthStr.split("-");
 return `${month}/${year}`;
 };
 
 useEffect(() => {
-const fetchMatches = async () => {
-const snapshot = await getDocs(collection(db, "matches"));
 
+  const fetchData = async () => {
 
-  const data = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+    // ===== MATCHES =====
+    const matchSnap = await getDocs(collection(db, "matches"));
+    const matchData = matchSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setMatches(matchData);
 
-  setMatches(data);
-};
+    // ===== USERS =====
+    const userSnap = await getDocs(collection(db, "users"));
+    const userData = userSnap.docs.map(doc => doc.data());
 
-fetchMatches();
+    setMembers(userData);
 
+  };
+
+  fetchData();
 
 }, []);
 
@@ -290,6 +296,29 @@ const topAssistEachMonth = Object.entries(assistsByMonth)
 
 return (
 <section className="intro-page">
+
+  <h3>👥 Thành viên đội bóng</h3>
+    <div style={{display:"flex", gap:"15px", flexWrap:"wrap"}}>
+    {members
+      .filter(m => m.name)   // bỏ dòng trống
+      .map((m,i)=>{
+
+        let icon = "⚽"; // mặc định
+
+        if (m.name.toLowerCase().includes("giang"))
+          icon = "🛡️";   // hậu vệ
+
+        if (m.name.toLowerCase().includes("tùng"))
+          icon = "🎯";   // tiền vệ
+
+        return(
+          <span key={i}>
+            {icon} {m.name}
+          </span>
+        )
+      })
+    }
+</div>
 
   <h1>📊 Thống kê CCF năm 2026</h1>
 
