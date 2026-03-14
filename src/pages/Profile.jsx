@@ -84,6 +84,7 @@ export default function Profile() {
         await updateDoc(docRef, {
           name: userData.name,
           note: userData.note,
+          job: userData.job,
           map: {
             ...userData.map,
             address: userData.map.address,
@@ -141,15 +142,24 @@ export default function Profile() {
         }
       />
 
-<h3>⚽ Thống kê cá nhân</h3>
+      <label>💼 Công việc / Kinh doanh chính:</label>
+      <input
+        type="text"
+        value={userData.job || ""}
+        onChange={(e) =>
+          setUserData({ ...userData, job: e.target.value })
+        }
+      />
 
-<p>🔥 Bàn thắng năm {new Date().getFullYear()}:
-<b>{yearGoals}</b></p>
+      <h3>⚽ Thống kê cá nhân</h3>
 
-<p>
-📅 Bàn thắng tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}:
-<b>{monthGoals}</b>
-</p>
+      <p>🔥 Bàn thắng năm {new Date().getFullYear()}:
+      <b>{yearGoals}</b></p>
+
+      <p>
+      📅 Bàn thắng tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}:
+      <b>{monthGoals}</b>
+      </p>
       
       <div className="profile-actions">
         <button onClick={handleSave} className="profile-btn-save">
