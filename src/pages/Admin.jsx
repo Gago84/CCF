@@ -13,6 +13,7 @@ function Admin() {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -22,6 +23,27 @@ function Admin() {
     } catch (err) {
       console.error("Logout error:", err);
     }
+    };
+
+    const loadUsers = async () => {
+      const snap = await getDocs(collection(db, "users"));
+      const data = snap.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+      setUsers(data);
+    };
+
+    const updateShortName = async (id, shortName) => {
+      try {
+        await updateDoc(doc(db, "users", id), {
+          shortName: shortName
+        });
+        loadUsers();
+      } catch (err) {
+        console.error(err);
+        alert("Không cập nhật được shortName");
+      }
     };
 
   // 🔐 Check login
@@ -44,6 +66,7 @@ useEffect(() => {
     console.log("User data:", snap.data());
 
     loadMatches();
+    loadUsers();
   });
 
   return () => unsub();
@@ -148,6 +171,34 @@ useEffect(() => {
       <button onClick={handleLogout} style={styles.logoutBtn}>
         🚪 Đăng xuất
       </button>
+
+    <h3>👥 Thành viên đội bóng</h3>
+
+    <div style={{background:"#fff",padding:10,borderRadius:10}}>
+    {users.map(u => (
+      <div key={u.id} style={{
+        display:"flex",
+        gap:10,
+        alignItems:"center",
+        marginBottom:6
+      }}>
+        <div style={{width:180}}>
+          {u.name || "Chưa đặt tên"}
+        </div>
+        <input
+          placeholder="shortName"
+          defaultValue={u.shortName || ""}
+          onBlur={(e)=>updateShortName(u.id,e.target.value)}
+          style={{
+            padding:4,
+            border:"1px solid #ccc",
+            borderRadius:6
+          }}
+        />
+      </div>
+    ))}
+
+    </div>
 
       {/* FORM */}
       <form onSubmit={handleSubmit} style={styles.form}>
