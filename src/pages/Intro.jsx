@@ -184,7 +184,18 @@ function Intro() {
 
             return (
 
-              <div className="match-box" key={m.id}>
+              <div
+                className="match-box"
+                key={m.id}
+                style={{
+                  borderBottom: "1px dashed #999",
+                  paddingBottom: "12px",
+                  marginBottom: "12px",
+                  background: "#fafafa",
+                  padding: "10px",
+                  borderRadius: "6px"
+                }}
+              >
 
                 {/* HEADER */}
                   <div
@@ -204,11 +215,6 @@ function Intro() {
                       <> — {getResultText(m.result)} ({m.result})</>
                     }
 
-                    {hasResult && m.goal && (
-                      <div style={{ marginLeft: "22px", marginBottom: "4px" }}>
-                        <b>CCF ghi bàn:</b> {m.goal}
-                      </div>
-                    )}
                   </div>
 
                 {/* DETAIL */}
