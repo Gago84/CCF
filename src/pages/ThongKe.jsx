@@ -274,10 +274,21 @@ const topAssistEachMonth = Object.entries(assistsByMonth)
 
 }).sort((a, b) => b.month.localeCompare(a.month));
 
+  // ===== 5 TRẬN GẦN NHẤT =====
+  const lastMatches = matches2026
+    .sort((a,b) => b.date.localeCompare(a.date)) // mới nhất trước
+    .slice(0,5);
+
+  const form = lastMatches.map(m => {
+    const [a,b] = m.result.split("-").map(Number);
+
+    if (a > b) return "W";
+    if (a === b) return "D";
+    return "L";
+  });
+
 
 return (
-
-
 <section className="intro-page">
 
   <h1>📊 Thống kê CCF năm 2026</h1>
@@ -291,6 +302,46 @@ return (
   </p>
 
   <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
+
+  <p>📊 5 trận gần nhất:</p>
+
+    <div style={{display:"flex", gap:"8px", marginBottom:"10px"}}>
+      {[...form].reverse().map((f,i)=>{
+        let color="#999";
+        let icon="➖";
+
+        if (f==="W"){
+          color="#2ecc71";
+          icon="✓";
+        }
+        if (f==="D"){
+          color="#888";
+          icon="–";
+        }
+        if (f==="L"){
+          color="#e74c3c";
+          icon="✕";
+        }
+
+        return(
+          <div key={i}
+            style={{
+              width:"28px",
+              height:"28px",
+              borderRadius:"50%",
+              background:color,
+              color:"#fff",
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"center",
+              fontWeight:"bold"
+            }}
+          >
+            {icon}
+          </div>
+        )
+      })}
+    </div>
 
   {/* ===== 3 CỘT ===== */}
       <div style={{display:"flex", gap:"20px"}}>
