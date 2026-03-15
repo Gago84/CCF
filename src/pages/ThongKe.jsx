@@ -381,9 +381,17 @@ return (
             {topScorers.map((p,i)=>{
             const medals=["🥇","🥈","🥉"];
             return(
-            <li key={p.name}>
-            {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.goals}</b>
-            </li>
+              <li 
+              key={p.name}
+              style={{
+              display:"flex",
+              justifyContent:"space-between",
+              fontSize:"14px"
+              }}
+              >
+              <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+              <b>{p.goals}</b>
+              </li>
             );
             })}
           </ul>
@@ -395,9 +403,17 @@ return (
             {topAssists.map((p,i)=>{
             const medals=["🥇","🥈","🥉"];
             return(
-            <li key={p.name}>
-            {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.assists}</b>
-            </li>
+              <li
+              key={p.name}
+              style={{
+              display:"flex",
+              justifyContent:"space-between",
+              fontSize:"14px"
+              }}
+              >
+              <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+              <b>{p.assists}</b>
+              </li>
             );
             })}
           </ul>
@@ -409,9 +425,17 @@ return (
           {topMvpYear.map((p,i)=>{
           const medals = ["🥇","🥈","🥉"];
           return(
-          <li key={p.name}>
-          {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.goals}+{p.assists}</b>
-          </li>
+            <li
+            key={p.name}
+            style={{
+            display:"flex",
+            justifyContent:"space-between",
+            fontSize:"14px"
+            }}
+            >
+            <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+            <b>{p.goals}+{p.assists}</b>
+            </li>
           );
           })}
         </ul>
@@ -453,9 +477,18 @@ return (
           {m.players.map((p,i)=>{
           const medals=["🥇","🥈","🥉"];
             return(
-              <p key={p.name}>
-              {medals[i]} {p.name} <b>{p.goals}</b>
-              </p>
+              <div
+              key={p.name}
+              style={{
+              display:"flex",
+              justifyContent:"space-between",
+              fontSize:"14px",
+              marginBottom:"4px"
+              }}
+              >
+              <span>{medals[i]} {p.name}</span>
+              <b>{p.goals}</b>
+              </div>
             );
           })}
 
@@ -468,9 +501,18 @@ return (
             {assists.players.map((p,i)=>{
             const medals=["🥇","🥈","🥉"];
               return(
-                <p key={p.name}>
-                {medals[i]} {p.name} <b>{p.assists}</b>
-                </p>
+                <div
+                key={p.name}
+                style={{
+                display:"flex",
+                justifyContent:"space-between",
+                fontSize:"14px",
+                marginBottom:"4px"
+                }}
+                >
+                <span>{medals[i]} {p.name}</span>
+                <b>{p.assists}</b>
+                </div>
               );
             })}
           </>
@@ -483,9 +525,18 @@ return (
               {topMvpEachMonth[index].players.map((p,i)=>{
               const medals=["🥇","🥈","🥉"];
               return(
-                <p key={p.name}>
-                {medals[i]} {p.name} <b>{p.goals}+{p.assists}</b>
-                </p>
+                <div
+                key={p.name}
+                style={{
+                display:"flex",
+                justifyContent:"space-between",
+                fontSize:"14px",
+                marginBottom:"4px"
+                }}
+                >
+                <span>{medals[i]} {p.name}</span>
+                <b>{p.goals}+{p.assists}</b>
+                </div>
               );
             })}
           </>
