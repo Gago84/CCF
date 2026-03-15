@@ -54,7 +54,7 @@ export default function Profile() {
           const goalNum = parseInt(parts.pop());   // lấy số cuối
           const player = parts.join(" ");          // phần còn lại là tên
           if (  player.trim().toLowerCase() ===
-  userData.name.trim().toLowerCase()) {
+          userData.name.trim().toLowerCase()) {
             const [year, month, day] = data.date.split("-");
             if (parseInt(year) === currentYear) {
               yearTotal += goalNum;
@@ -83,6 +83,7 @@ export default function Profile() {
         const docRef = doc(db, "users", user.uid);
         await updateDoc(docRef, {
           name: userData.name,
+          birthday: userData.birthday,   // thêm dòng này
           note: userData.note,
           job: userData.job,
           map: {
@@ -124,6 +125,15 @@ export default function Profile() {
         value={userData.name}
         onChange={(e) =>
           setUserData({ ...userData, name: e.target.value })
+        }
+      />
+
+      <label>🎂 Ngày sinh:</label>
+      <input
+        type="date"
+        value={userData.birthday || ""}
+        onChange={(e) =>
+          setUserData({ ...userData, birthday: e.target.value })
         }
       />
 
