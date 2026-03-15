@@ -382,7 +382,7 @@ return (
             const medals=["🥇","🥈","🥉"];
             return(
             <li key={p.name}>
-            {i < 3 ? medals[i] : "👉"} {p.name}: <b>{p.goals}</b> bàn
+            {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.goals}</b>
             </li>
             );
             })}
@@ -396,7 +396,7 @@ return (
             const medals=["🥇","🥈","🥉"];
             return(
             <li key={p.name}>
-            {i < 3 ? medals[i] : "👉"} {p.name}: <b>{p.assists}</b>
+            {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.assists}</b>
             </li>
             );
             })}
@@ -410,7 +410,7 @@ return (
           const medals = ["🥇","🥈","🥉"];
           return(
           <li key={p.name}>
-          {i < 3 ? medals[i] : "👉"} {p.name} ({p.goals}⚽ + {p.assists}🎯)
+          {i < 3 ? medals[i] : "👉"} {p.name} <b>{p.goals}+{p.assists}</b>
           </li>
           );
           })}
@@ -454,7 +454,7 @@ return (
           const medals=["🥇","🥈","🥉"];
             return(
               <p key={p.name}>
-              {medals[i]} {p.name} ({p.goals})
+              {medals[i]} {p.name} <b>{p.goals}</b>
               </p>
             );
           })}
@@ -469,7 +469,7 @@ return (
             const medals=["🥇","🥈","🥉"];
               return(
                 <p key={p.name}>
-                {medals[i]} {p.name} ({p.assists})
+                {medals[i]} {p.name} <b>{p.assists}</b>
                 </p>
               );
             })}
@@ -484,7 +484,7 @@ return (
               const medals=["🥇","🥈","🥉"];
               return(
                 <p key={p.name}>
-                {medals[i]} {p.name} ({p.goals}⚽ + {p.assists}🎯)
+                {medals[i]} {p.name} <b>{p.goals}+{p.assists}</b>
                 </p>
               );
             })}
