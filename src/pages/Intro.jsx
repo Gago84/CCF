@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {  collection,  getDocs,  query,  orderBy,  where,  addDoc,  serverTimestamp} from "firebase/firestore";
+import {  collection,  getDocs,  query,  orderBy,  where,  addDoc,  serverTimestamp, onSnapshot} from "firebase/firestore";
 import { db,auth } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import "../styles/intro.css";
@@ -10,8 +10,6 @@ function Intro() {
   const [loading, setLoading] = useState(true);
   const [openMatchId, setOpenMatchId] = useState(null);
   const [phone, setPhone] = useState("");
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
   const toggleMatch = (id) => {
@@ -48,120 +46,80 @@ function Intro() {
     return "Thua";
   };
 
-  // ===== FORMAT TIME COMMENT =====
-  const formatTime = (timestamp) => {
-
-    if (!timestamp) return "";
-
-    const date = timestamp.toDate();
-
-    return date.toLocaleString("vi-VN");
-  };
-
-  // ===== LẤY SHORTNAME =====
-  const getShortNameByPhone = async (phone) => {
-
-    const q = query(
-      collection(db, "users"),
-      where("orders.phone", "==", phone)
-    );
-
-    const snap = await getDocs(q);
-
-    if (!snap.empty) {
-      return snap.docs[0].data().orders.shortName;
-    }
-
-    return "Ẩn danh";
-  };
-
-  // ===== GỬI COMMENT =====
-  const submitComment = async (matchId) => {
-
-    if (!phone || !comment) {
-      alert("Nhập số điện thoại và bình luận");
-      return;
-    }
-
-    const shortName = await getShortNameByPhone(phone);
-
-    await addDoc(collection(db, "comments"), {
-      matchId,
-      phone,
-      shortName,
-      content: comment,
-      createdAt: serverTimestamp()
-    });
-
-    setComment("");
-    loadComments(matchId);
-  };
-
-  // ===== LOAD COMMENTS =====
-  const loadComments = async (matchId) => {
-
-    const q = query(
-      collection(db, "comments"),
-      where("matchId", "==", matchId),
-      orderBy("createdAt", "desc")
-    );
-
-    const snap = await getDocs(q);
-
-    const data = snap.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    setComments(data);
-  };
+    // ===== FORMAT TIME COMMENT =====
+    const formatTime = (timestamp) => {
+      if (!timestamp) return "";
+      const date = timestamp.toDate();
+      return date.toLocaleString("vi-VN");
+    };
 
     // ===== COMMENT BOX =====
-    const CommentBox = ({ matchId }) => {
-      useEffect(() => {
-        loadComments(matchId);
-      }, []);
-      return (
-        <div className="comment-box">
-          <div className="comment-header">
-            {currentUser ? (
-              <div className="comment-user">
-                {currentUser.shortName}
+        const CommentBox = ({ matchId }) => {
+          const [comments, setComments] = useState([]);
+          const [text, setText] = useState("");
+          useEffect(() => {
+            const q = query(
+              collection(db, "comments"),
+              where("matchId", "==", matchId),
+              orderBy("createdAt", "desc")
+            );
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+              const data = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              }));
+              setComments(data);
+            });
+            return () => unsubscribe();
+          }, [matchId]);
+          const handleSubmit = async () => {
+          if (!text) {
+            alert("Nhập bình luận");
+            return;
+          }
+          if (!currentUser) {
+            alert("Bạn cần đăng nhập");
+            return;
+          }
+          await addDoc(collection(db, "comments"), {
+            matchId,
+            phone: currentUser?.phone ?? "",
+            shortName: currentUser?.shortName ?? "Ẩn danh",
+            content: text,
+            createdAt: serverTimestamp()
+          });
+            setText("");
+          };
+          return (
+            <div className="comment-box">
+              <div className="comment-list">
+                {comments.map(c => (
+                  <div key={c.id} className="comment-item">
+                    <div className="comment-name">
+                      {c.shortName}
+                      <span className="comment-time">
+                        {" "}• {formatTime(c.createdAt)}
+                      </span>
+                    </div>
+                    <div className="comment-text">
+                      {c.content}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <div className="comment-login">
-                Đăng nhập / đăng ký
+              <div className="comment-input">
+                <input
+                  placeholder="Viết bình luận..."
+                  value={text}
+                  onChange={(e)=>setText(e.target.value)}
+                />
+                <button onClick={handleSubmit}>
+                  Gửi
+                </button>
               </div>
-            )}
-          </div>
-          <div className="comment-list">
-            {comments.map(c => (
-              <div key={c.id} className="comment-item">
-                <div className="comment-name">
-                  {c.shortName}
-                </div>
-                <div className="comment-time">
-                  {formatTime(c.createdAt)}
-                </div>
-                <div className="comment-text">
-                  {c.content}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="comment-input">
-            <input
-              placeholder="Viết bình luận..."
-              value={comment}
-              onChange={(e)=>setComment(e.target.value)}
-            />
-            <button onClick={()=>submitComment(matchId)}>
-              Gửi
-            </button>
-          </div>
-        </div>
-      );
-    };
+            </div>
+          );
+        };
 
   // ===== HEAD TO HEAD =====
   const getHeadToHeadHistory = (currentMatch) => {
@@ -187,7 +145,7 @@ function Intro() {
       );
       const snap = await getDocs(q);
       if (!snap.empty) {
-        setCurrentUser(snap.docs[0].data().orders);
+        setCurrentUser(snap.docs[0].data());
       }
     } else {
       setCurrentUser(null);
