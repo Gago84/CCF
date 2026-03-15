@@ -389,7 +389,7 @@ return (
               fontSize:"14px"
               }}
               >
-              <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+              <span>{i < 3 ? medals[i] : ""} {p.name}</span>
               <b>{p.goals}</b>
               </li>
             );
@@ -411,7 +411,7 @@ return (
               fontSize:"14px"
               }}
               >
-              <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+              <span>{i < 3 ? medals[i] : ""} {p.name}</span>
               <b>{p.assists}</b>
               </li>
             );
@@ -433,7 +433,7 @@ return (
             fontSize:"14px"
             }}
             >
-            <span>{i < 3 ? medals[i] : "👉"} {p.name}</span>
+            <span>{i < 3 ? medals[i] : ""} {p.name}</span>
             <b>{p.goals}+{p.assists}</b>
             </li>
           );
