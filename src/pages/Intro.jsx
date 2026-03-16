@@ -175,32 +175,22 @@ function Intro() {
     };
     fetchMatches();
   }, []);
-
   if (loading) return <p>⏳ Đang tải lịch thi đấu...</p>;
-
   const groupByMonth = matches.reduce((acc, item) => {
     acc[item.month] = acc[item.month] || [];
     acc[item.month].push(item);
     return acc;
   }, {});
-
   return (
     <section className="intro-page" style={{ lineHeight: "1.6" }}>
-
       {Object.keys(groupByMonth).map((month) => (
-
         <div key={month}>
-
           <h1>
             📅 Lịch tháng {formatMonthTitle(month)} 🤩
           </h1>
-
           {groupByMonth[month].map((m) => {
-
             const hasResult = !!m.result;
-
             return (
-
               <div
                 className="match-box"
                 key={m.id}
@@ -213,7 +203,6 @@ function Intro() {
                   borderRadius: "6px"
                 }}
               >
-
                 <div
                   onClick={() => hasResult && toggleMatch(m.id)}
                   style={{
@@ -224,15 +213,11 @@ function Intro() {
                   }}
                 >
                   {hasResult && (openMatchId === m.id ? "▼ " : "▶ ")}
-
                   {m.day} — {formatDate(m.date)}
-
                   {hasResult &&
                     <> — {getResultText(m.result)} ({m.result})</>
                   }
-
                 </div>
-
                 {(openMatchId === m.id || !hasResult) && (
 
                   <div style={{ marginLeft: "12px" }}>
@@ -268,14 +253,11 @@ function Intro() {
                     <Row label="Trang phục" value={m.uniform} />
                     <Row label="Kết quả" value={m.result} />
                     <Row label="CCF ghi bàn" value={m.goal} />
-
+                    <Row label="CCF kiến tạo" value={m.assist} />
                     {/* VIDEO */}
                     {m.highlight && (
-
                       <div style={{ marginTop: "8px", marginBottom: "10px" }}>
-
                         <b>Video highlight:</b>
-
                         <div style={{ marginTop: "6px" }}>
                           <iframe
                             width="100%"
@@ -287,20 +269,14 @@ function Intro() {
                             style={{ borderRadius: "8px" }}
                           ></iframe>
                         </div>
-
                         <CommentBox matchId={m.id} />
-
                       </div>
-
                     )}
-
                     {!m.highlight && (
                       <CommentBox matchId={m.id} />
                     )}
-
                   </div>
                 )}
-
               </div>
             );
           })}
