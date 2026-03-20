@@ -283,7 +283,7 @@ const topAssistEachMonth = Object.entries(assistsByMonth)
   // ===== 5 TRẬN GẦN NHẤT =====
   const lastMatches = matches2026
     .sort((a,b) => b.date.localeCompare(a.date)) // mới nhất trước
-    .slice(0,5);
+    .slice(0,9);
 
   const form = lastMatches.map(m => {
     const [a,b] = m.result.split("-").map(Number);
@@ -332,7 +332,7 @@ return (
 
   <p>🥅 Tổng bàn thắng: <b>{totalGoals}</b></p>
 
-  <p>📊 5 trận gần nhất:</p>
+  <p>📊 9 trận gần nhất:</p>
 
     <div style={{display:"flex", gap:"8px", marginBottom:"10px"}}>
       {[...form].reverse().map((f,i)=>{
