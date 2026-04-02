@@ -9,6 +9,16 @@ import { getDoc } from "firebase/firestore";
 const emptyForm = {  date: "",  day: "",  month: "",  field: "",  time: "",  match: "",  contact: "",  uniform: "",  result: "",  goal: "", assist: "",  highlight: ""};
 
 function Admin() {
+
+  const [views, setViews] = useState(0);
+
+  const loadViews = async () => {
+    const snap = await getDoc(doc(db, "analytics", "views"));
+    if (snap.exists()) {
+      setViews(snap.data().count || 0);
+    }
+  };
+  
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
@@ -67,6 +77,7 @@ useEffect(() => {
 
     loadMatches();
     loadUsers();
+    loadViews();
   });
 
   return () => unsub();
@@ -171,7 +182,7 @@ useEffect(() => {
       <button onClick={handleLogout} style={styles.logoutBtn}>
         🚪 Đăng xuất
       </button>
-
+<h3>📊 Lượt truy cập: {views}</h3>
     <h3>👥 Thành viên đội bóng</h3>
 
     <div style={{background:"#fff",padding:10,borderRadius:10}}>

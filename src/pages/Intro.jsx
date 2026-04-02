@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import {  collection,  getDocs,  query,  orderBy,  where,  addDoc,  serverTimestamp, onSnapshot} from "firebase/firestore";
+import {  collection,  getDocs,  query,  orderBy,  where,  addDoc,  serverTimestamp, onSnapshot, getDoc, doc} from "firebase/firestore";
 import { db,auth } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import "../styles/intro.css";
+import { increaseView } from "../analytics";
 
 function Intro() {
 
@@ -135,6 +136,45 @@ function Intro() {
       )
       .sort((a, b) => b.date.localeCompare(a.date));
   };
+
+// count view
+useEffect(() => {
+
+  const handleView = async () => {
+
+    if (document.visibilityState !== "visible") return;
+
+    try {
+      const user = auth.currentUser;
+
+      // ❌ nếu là admin → bỏ qua
+      if (user) {
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        if (snap.exists() && snap.data().role === "admin") {
+          return;
+        }
+      }
+
+      // ✅ tăng view (anonymous vẫn chạy)
+      await increaseView();
+
+    } catch (err) {
+      console.error("View error:", err);
+    }
+  };
+
+  document.addEventListener("visibilitychange", handleView);
+
+  // 👉 OPTIONAL: load lần đầu cũng tính luôn
+  handleView();
+
+  return () => {
+    document.removeEventListener("visibilitychange", handleView);
+  };
+
+}, []);
 
   useEffect(() => {
   const unsub = onAuthStateChanged(auth, async (user) => {
